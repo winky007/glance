@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>New Tab</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div class="bg" id="bg"></div>
+    <div class="scrim"></div>
+
+    <div class="layout">
+        <!-- Left: Empty for wallpaper visibility -->
+        <div class="col-left">
+        </div>
+
+        <!-- Right: Calendar + News + OnThisDay -->
+        <div class="col-right">
+            <!-- Calendar Card -->
+            <section class="card card-right">
+                <div id="today-weekday" style="display:none"></div>
+                <div class="calendar-row-date" id="today-day"></div>
+                <div class="calendar-row-lunar">
+                    <span id="today-lunar"></span>
+                    <span class="weather-info" id="weather-info"></span>
+                </div>
+            </section>
+
+            <!-- News Card -->
+            <section class="card card-news">
+                <div class="card-header" style="padding-bottom: 4px;">
+                    <div class="card-title" id="label-news" style="display:none">News</div> 
+                    <!-- We will insert tabs here via JS or container -->
+                    <div id="news-tabs" class="news-tabs"></div>
+                </div>
+                <div id="news-status" class="status"></div>
+                <ul id="news-list" class="news-list"></ul>
+                <div id="news-source" class="news-source" hidden></div>
+            </section>
+
+            <!-- On This Day Card -->
+            <section class="card card-onthisday">
+                <div class="card-header">
+                    <div class="card-title" id="label-onthisday">On This Day</div>
+                    <div class="card-subtitle" id="onthisday-date"></div>
+                </div>
+                <div id="onthisday-status" class="status"></div>
+                <ul id="onthisday-list" class="events-list" hidden></ul>
+                <div id="onthisday-source" class="events-source" hidden></div>
+            </section>
+            
+            <div class="footer-actions">
+                <button id="btn-settings" class="btn-settings" title="Settings">Settings</button>
+                <div class="credit" id="bg-credit" hidden></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/lunar.js"></script>
+    <script src="src/storage.js"></script>
+    <script src="src/i18n.js"></script>
+    <script src="src/imagedb.js"></script>
+    <script src="src/weather.js"></script>
+    <script src="src/news.js"></script>
+    <script src="src/wikipedia.js"></script>
+    <script src="src/onthisday.js"></script>
+    <script src="src/wallpaper.js"></script>
+    <script src="src/newtab.js"></script>
+</body>
+
+</html>

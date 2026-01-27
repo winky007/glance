@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "看尽",
+  "version": "0.1.0",
+  "description": "智能新标签页：日历/农历 + 新闻 + 历史上的今天 + 精美壁纸",
+  "icons": {
+    "128": "icons/icon128.png"
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "options_page": "options.html",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "*://*/*",
+    "https://api.unsplash.com/*",
+    "https://images.unsplash.com/*",
+    "https://zh.wikipedia.org/*",
+    "https://en.wikipedia.org/*",
+    "https://commons.wikimedia.org/*",
+    "https://upload.wikimedia.org/*",
+    "http://news.baidu.com/*",
+    "https://news.baidu.com/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["img/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
+
+

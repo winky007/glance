@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="settingsTitle">Settings - Calendar New Tab</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="options">
+    <main class="options-layout">
+        <header class="options-header">
+            <h2 data-i18n="settingsTitle">Settings</h2>
+        </header>
+        <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title" data-i18n="language">Language</div>
+                <div class="card-subtitle" data-i18n="languageSubtitle">Supports English/Chinese; default English</div>
+            </div>
+
+            <label class="field">
+                <div class="field-label" data-i18n="uiLanguage">UI Language</div>
+                <select id="uiLang">
+                    <option value="en">English</option>
+                    <option value="zh">中文</option>
+                </select>
+            </label>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title" data-i18n="newsSection">News</div>
+                <div class="card-subtitle" data-i18n="newsSubtitle">RSS feeds</div>
+            </div>
+            
+            <div class="field">
+                <div class="field-label" data-i18n="rssUrl">RSS URLs</div>
+                <div id="rssFeedsList" class="rss-list"></div>
+                
+                <div class="row" style="margin-top: 10px;">
+                    <input id="newRssTitle" type="text" class="rss-title" data-i18n-placeholder="rssTitlePlaceholder" placeholder="Title (optional)" />
+                    <input id="newRssUrl" type="text" placeholder="https://..." style="flex: 1;" />
+                    <button id="btnAddRss" class="btn" type="button" data-i18n="add">Add</button>
+                </div>
+
+                <div class="muted" style="margin-top: 12px;">
+                    <span data-i18n="rssHint">Recommended:</span><br />
+                    https://36kr.com/feed （可以直接使用这个URL） <br/>
+                    https://www.chinanews.com.cn/rss/ (不要使用这个URL 打开这个链接复制里面的RSS地址) <br/>
+                    https://www.voachinese.com/rssfeeds (不要使用这个URL 打开这个链接复制里面的RSS地址) <br/>
+                    <br/>
+                    <span data-i18n="rssFormatHint">Supports RSS 2.0 and Atom formats. Most news sites provide RSS feeds.</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <label class="field">
+                <div class="field-label" data-i18n="onThisDaySource">On This Day data source</div>
+                <select id="onThisDaySource">
+                    <option value="baike" data-i18n="onThisDaySourceBaike">Baidu Baike</option>
+                    <option value="wikipedia" data-i18n="onThisDaySourceWiki">Wikipedia</option>
+                </select>
+            </label>
+
+            <label class="field" id="eventsLangField" hidden>
+                <div class="field-label" data-i18n="eventsLanguage">On This Day language (Wikipedia code)</div>
+                <input id="eventsLang" type="text" autocomplete="off" placeholder="en / zh / ja / fr ..." />
+                <div class="muted" data-i18n="eventsLangHint">Will request `https://{lang}.wikipedia.org/...`</div>
+            </label>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title" data-i18n="weatherSection">Weather</div>
+                <div class="card-subtitle" data-i18n="weatherSubtitle">Show current weather next to lunar calendar</div>
+            </div>
+
+            <label class="field">
+                <div class="field-label" data-i18n="weatherEnabled">Enable weather</div>
+                <select id="weatherEnabled">
+                    <option value="true">✓ On</option>
+                    <option value="false">✗ Off</option>
+                </select>
+                <div class="muted" data-i18n="weatherEnabledHint">Requires location information to fetch weather data</div>
+            </label>
+
+            <div id="weatherLocationConfig" hidden>
+                <label class="field" style="margin-top: 16px;">
+                    <div class="field-label" data-i18n="weatherLocMethod">Location Method</div>
+                    <select id="weatherLocMethod">
+                        <option value="auto" data-i18n="weatherLocMethodAuto">Auto-detect (requires browser permission)</option>
+                        <option value="city" data-i18n="weatherLocMethodCity">Search by city name</option>
+                    </select>
+                </label>
+
+                <!-- Auto-detect method -->
+                <div id="weatherAutoConfig">
+                    <div class="row" style="margin-top: 12px;">
+                        <button id="btn-detect-location" class="btn" type="button" data-i18n="weatherAutoDetect">Auto-detect location</button>
+                        <span id="location-status" class="muted"></span>
+                    </div>
+                </div>
+
+                <!-- City search method -->
+                <div id="weatherCityConfig" hidden>
+                    <label class="field" style="margin-top: 12px;">
+                        <div class="field-label" data-i18n="weatherCity">City Name</div>
+                        <div class="row" style="margin-top: 0;">
+                            <input id="weatherCity" type="text" autocomplete="off" data-i18n-placeholder="weatherCityPlaceholder" placeholder="e.g. Hefei, Shanghai, New York" style="flex: 1;" />
+                            <button id="btn-search-city" class="btn" type="button" data-i18n="weatherSearchCity">Search</button>
+                        </div>
+                        <div class="muted" style="margin-top: 8px;">
+                            <span data-i18n="weatherCityHint">Enter English city name to search. </span>
+                            <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noopener">Verify city here ↗</a>
+                        </div>
+                    </label>
+
+                    <div id="citySearchResults" style="margin-top: 8px;"></div>
+                </div>
+                
+                <div class="grid2" style="margin-top: 16px;">
+                    <label class="field">
+                        <div class="field-label" data-i18n="weatherLat">Latitude</div>
+                        <input id="weatherLat" type="text" autocomplete="off" data-i18n-placeholder="weatherLatPlaceholder" placeholder="e.g. 31.2222" readonly style="opacity: 0.7;" />
+                    </label>
+                    <label class="field">
+                        <div class="field-label" data-i18n="weatherLon">Longitude</div>
+                        <input id="weatherLon" type="text" autocomplete="off" data-i18n-placeholder="weatherLonPlaceholder" placeholder="e.g. 121.4581" readonly style="opacity: 0.7;" />
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title" data-i18n="wallpaperSource">Background Image Source</div>
+            </div>
+
+            <label class="field">
+                <select id="wallpaperSource">
+                    <option value="local" data-i18n="wallpaperSourceLocal">Local Images</option>
+                    <option value="uploaded" data-i18n="wallpaperSourceUploaded">Uploaded Images</option>
+                    <option value="bing" data-i18n="wallpaperSourceBingRandom">Bing Random Wallpaper</option>
+                    <option value="bingToday" data-i18n="wallpaperSourceBingToday">Bing Today's Wallpaper</option>
+                    <option value="unsplash" data-i18n="wallpaperSourceUnsplash">Unsplash</option>
+                </select>
+            </label>
+
+            <div id="localImagesConfig" hidden>
+                <div class="card-header" style="margin-top: 16px;">
+                    <div class="card-title" data-i18n="localImagesTitle">Upload Local Images</div>
+                    <div class="card-subtitle" data-i18n="localImagesSubtitle">Drag and drop images here, or click to select</div>
+                </div>
+
+                <div id="dropZone" class="drop-zone">
+                    <div class="drop-zone-content">
+                        <div class="drop-zone-icon">📁</div>
+                        <div class="drop-zone-text" data-i18n="dropZoneText">Drop images here or click to select</div>
+                        <input type="file" id="fileInput" multiple accept="image/*" style="display: none;" />
+                    </div>
+                </div>
+
+                <div id="localImagesList" class="local-images-list"></div>
+
+                <div class="row" style="margin-top: 16px;">
+                    <button id="btn-export-images" class="btn btn-ghost" type="button" data-i18n="exportImages">Export Images</button>
+                    <button id="btn-import-images" class="btn btn-ghost" type="button" data-i18n="importImages">Import Images</button>
+                    <input type="file" id="importFileInput" accept=".json" style="display: none;" />
+                </div>
+            </div>
+
+            <div id="unsplashConfig" hidden>
+                <div class="card-header" style="margin-top: 16px;">
+                    <div class="card-title" data-i18n="unsplashSection">Unsplash Configuration</div>
+                    <div class="card-subtitle" data-i18n="unsplashSubtitle">Fill in Access Key and Collection ID to use Unsplash</div>
+                </div>
+
+                <label class="field">
+                    <div class="field-label" data-i18n="unsplashKey">Access Key</div>
+                    <input id="unsplashKey" type="password" autocomplete="off" placeholder="Unsplash Access Key" />
+                </label>
+
+                <label class="field">
+                    <div class="field-label" data-i18n="unsplashCollectionId">Collection ID</div>
+                    <input id="unsplashCollectionId" type="text" autocomplete="off"
+                        data-i18n-placeholder="unsplashCollectionPlaceholder" placeholder="e.g. 123456" />
+                </label>
+
+                <div class="row">
+                    <button id="btn-clear" class="btn btn-ghost" type="button" data-i18n="clear">Clear</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title" data-i18n="refreshPolicy">Refresh Policy</div>
+                <div class="card-subtitle" data-i18n="refreshSubtitle">Default: one fixed image per day</div>
+            </div>
+
+            <div class="grid2">
+                <label class="field">
+                    <div class="field-label" data-i18n="bgRefresh">Background refresh</div>
+                    <select id="bgRefresh">
+                        <option value="daily" data-i18n="refreshDaily">Daily (recommended)</option>
+                        <option value="always" data-i18n="refreshAlways">Random each new tab</option>
+                    </select>
+                </label>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title" data-i18n="cacheAndBlock">Cache & Blocklist</div>
+                <div class="card-subtitle" data-i18n="cacheSubtitle">For 'daily fixed' mode; reduces API calls</div>
+            </div>
+
+            <div class="row">
+                <button id="btn-clear-cache" class="btn btn-ghost" type="button" data-i18n="clearCache">Clear cache</button>
+                <button id="btn-clear-block" class="btn btn-ghost" type="button" data-i18n="clearBlock">Clear blocklist</button>
+                <span id="cache-status" class="muted"></span>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="src/storage.js"></script>
+    <script src="src/i18n.js"></script>
+    <script src="src/imagedb.js"></script>
+    <script src="src/options.js"></script>
+</body>
+
+</html>
