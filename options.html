@@ -55,6 +55,11 @@
                     <span data-i18n="rssFormatHint">Supports RSS 2.0 and Atom formats. Most news sites provide RSS feeds.</span>
                 </div>
             </div>
+
+            <div class="row" style="margin-top: 12px;">
+                <button id="btn-clear-news-cache" class="btn btn-ghost" type="button" data-i18n="clearCache">Clear cache</button>
+                <span id="news-cache-status" class="muted"></span>
+            </div>
         </section>
 
         <section class="card">
@@ -71,6 +76,11 @@
                 <input id="eventsLang" type="text" autocomplete="off" placeholder="en / zh / ja / fr ..." />
                 <div class="muted" data-i18n="eventsLangHint">Will request `https://{lang}.wikipedia.org/...`</div>
             </label>
+
+            <div class="row" style="margin-top: 8px;">
+                <button id="btn-clear-events-cache" class="btn btn-ghost" type="button" data-i18n="clearCache">Clear cache</button>
+                <span id="events-cache-status" class="muted"></span>
+            </div>
         </section>
 
         <section class="card">
@@ -187,12 +197,14 @@
                 <label class="field">
                     <div class="field-label" data-i18n="unsplashCollectionId">Collection ID</div>
                     <input id="unsplashCollectionId" type="text" autocomplete="off"
-                        data-i18n-placeholder="unsplashCollectionPlaceholder" placeholder="e.g. 123456" />
+                        data-i18n-placeholder="unsplashCollectionPlaceholder" placeholder="e.g. 123456,789012 (numbers only)" />
                 </label>
 
-                <div class="row">
-                    <button id="btn-clear" class="btn btn-ghost" type="button" data-i18n="clear">Clear</button>
-                </div>
+            </div>
+
+            <div class="row" style="margin-top: 12px;">
+                <button id="btn-clear-wallpaper-cache" class="btn btn-ghost" type="button" data-i18n="clearCache">Clear cache</button>
+                <span id="wallpaper-cache-status" class="muted"></span>
             </div>
         </section>
 
@@ -220,9 +232,8 @@
             </div>
 
             <div class="row">
-                <button id="btn-clear-cache" class="btn btn-ghost" type="button" data-i18n="clearCache">Clear cache</button>
                 <button id="btn-clear-block" class="btn btn-ghost" type="button" data-i18n="clearBlock">Clear blocklist</button>
-                <span id="cache-status" class="muted"></span>
+                <span id="block-status" class="muted"></span>
             </div>
         </section>
 
