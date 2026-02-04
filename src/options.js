@@ -185,28 +185,35 @@ function showToast(text, variant) {
   }, 3000);
 }
 
-async function clearKey() {
-  const Storage = window.CalendarExtStorage;
-  $("unsplashKey").value = "";
-  $("unsplashCollectionId").value = "";
-  await Storage.setUnsplashKey("");
-  await Storage.setSettings({ unsplashCollectionId: "" });
-  showToast(t("clearedKey"), "success");
-}
-
-async function clearCaches() {
-  const Storage = window.CalendarExtStorage;
-  const st = $("cache-status");
+async function clearCacheWithStatus(clearFn, statusId) {
+  const st = $(statusId);
+  if (!st) return;
   st.textContent = "...";
-  await Storage.clearCaches();
+  await clearFn();
   st.textContent = t("cacheCleared");
   setTimeout(() => (st.textContent = ""), 1500);
   showToast(t("cacheCleared"), "success");
 }
 
+async function clearNewsCache() {
+  const Storage = window.CalendarExtStorage;
+  await clearCacheWithStatus(() => Storage.clearNewsCache(), "news-cache-status");
+}
+
+async function clearEventsCache() {
+  const Storage = window.CalendarExtStorage;
+  await clearCacheWithStatus(() => Storage.clearEventsCache(), "events-cache-status");
+}
+
+async function clearWallpaperCache() {
+  const Storage = window.CalendarExtStorage;
+  await clearCacheWithStatus(() => Storage.clearWallpaperCache(), "wallpaper-cache-status");
+}
+
 async function clearBlock() {
   const Storage = window.CalendarExtStorage;
-  const st = $("cache-status");
+  const st = $("block-status");
+  if (!st) return;
   st.textContent = "...";
   await Storage.clearBlocklist();
   st.textContent = t("blockCleared");
@@ -366,8 +373,9 @@ async function importImages(file) {
 
 function main() {
   loadForm().catch(() => {});
-  $("btn-clear").addEventListener("click", () => clearKey().catch(() => {}));
-  $("btn-clear-cache").addEventListener("click", () => clearCaches().catch(() => {}));
+  $("btn-clear-news-cache").addEventListener("click", () => clearNewsCache().catch(() => {}));
+  $("btn-clear-events-cache").addEventListener("click", () => clearEventsCache().catch(() => {}));
+  $("btn-clear-wallpaper-cache").addEventListener("click", () => clearWallpaperCache().catch(() => {}));
   $("btn-clear-block").addEventListener("click", () => clearBlock().catch(() => {}));
   $("onThisDaySource").addEventListener("change", syncOnThisDayUi);
 

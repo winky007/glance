@@ -27,6 +27,7 @@ function formatWeekdayFull(date = new Date()) {
 }
 
 let __uiLang = "en";
+let __currentWallpaper = null;
 
 function setBackground(item) {
   const bg = $("bg");
@@ -492,6 +493,7 @@ async function renderWallpaper({ forceRefresh = false } = {}) {
   const Wallpaper = window.CalendarExtWallpaper;
   const item = await Wallpaper.getWallpaper({ forceRefresh });
   setBackground(item);
+  __currentWallpaper = item;
   return item;
 }
 
@@ -517,6 +519,21 @@ async function main() {
         }
       });
     }
+
+    const refreshLabel = window.CalendarExtI18n.t(uiLang, "refreshWallpaper");
+    const btnRefresh = $("btn-refresh-wallpaper");
+    if (btnRefresh) {
+      btnRefresh.textContent = truncateWithEllipsis(refreshLabel, 30);
+      btnRefresh.title = refreshLabel;
+      btnRefresh.addEventListener("click", async () => {
+        btnRefresh.disabled = true;
+        try {
+          await renderWallpaper({ forceRefresh: true });
+        } finally {
+          btnRefresh.disabled = false;
+        }
+      });
+    }
     
     const newsStatus = $("news-status");
     if (newsStatus) newsStatus.textContent = window.CalendarExtI18n.t(uiLang, "loading");
@@ -535,21 +552,14 @@ async function main() {
 
   await Promise.all([renderNews(), renderEvents(), renderWallpaper()]);
 
-  let currentWallpaper = null;
-  try {
-    currentWallpaper = await window.CalendarExtWallpaper.getWallpaper({ forceRefresh: false });
-  } catch (e) {
-    // ignore
-  }
-
   const credit = $("bg-credit");
   if (credit) {
     credit.addEventListener("contextmenu", async (e) => {
       e.preventDefault();
       try {
-        if (currentWallpaper) {
-          await window.CalendarExtWallpaper.blockCurrentWallpaper(currentWallpaper);
-          currentWallpaper = await renderWallpaper({ forceRefresh: true });
+        if (__currentWallpaper) {
+          await window.CalendarExtWallpaper.blockCurrentWallpaper(__currentWallpaper);
+          await renderWallpaper({ forceRefresh: true });
         }
       } catch (err) {
         // ignore

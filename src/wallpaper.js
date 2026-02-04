@@ -10,11 +10,17 @@ function stripHtmlToText(html) {
 function normalizeCollectionId(s) {
   const v = String(s || "").trim();
   if (!v) return "";
-  // Unsplash collection id should be digits (usually)
-  if (/^\d+$/.test(v)) return v;
-  // Allow pasted url fragments like ".../collections/12345/..."
-  const m = v.match(/collections\/(\d+)/i);
-  return m ? m[1] : v;
+  // Support multiple numeric collection IDs (comma separated)
+  const parts = v.split(/[,，\s]+/).map((part) => {
+    const p = part.trim();
+    if (!p) return "";
+    // Unsplash collection id should be digits (usually)
+    if (/^\d+$/.test(p)) return p;
+    // Allow pasted url fragments like ".../collections/12345/..."
+    const m = p.match(/collections\/(\d+)/i);
+    return m ? m[1] : "";
+  }).filter(Boolean);
+  return parts.join(",");
 }
 
 function todayParts(d = new Date()) {
@@ -228,8 +234,18 @@ async function getWallpaper({ forceRefresh = false } = {}) {
 
   const cacheByDay = await Storage.getBgCacheByDay();
   const cached = cacheByDay[dateKey];
+  const wallpaperSource = settings.wallpaperSource || "bing";
 
-  const useDailyCache = settings.bgRefresh === "daily" && !forceRefresh;
+  // Check if cache matches current wallpaper source
+  const cacheMatchesSource = cached && (
+    (wallpaperSource === "bing" && cached.provider === "bing") ||
+    (wallpaperSource === "bingToday" && cached.provider === "bing") ||
+    (wallpaperSource === "unsplash" && cached.provider === "unsplash") ||
+    (wallpaperSource === "local" && cached.provider === "local") ||
+    (wallpaperSource === "uploaded" && cached.provider === "uploaded")
+  );
+
+  const useDailyCache = settings.bgRefresh === "daily" && !forceRefresh && cacheMatchesSource;
   if (useDailyCache && cached && cached.provider && (cached.imageUrl || cached.cssBackground)) {
     return { ...cached, fromCache: true };
   }
@@ -238,8 +254,6 @@ async function getWallpaper({ forceRefresh = false } = {}) {
   const timeout = setTimeout(() => controller.abort(), 6500);
 
   try {
-    const wallpaperSource = settings.wallpaperSource || "bing";
-
     // 1) Local images (IndexedDB + file system)
     if (wallpaperSource === "local") {
       const localItem = await getLocalImageFallback();
@@ -358,6 +372,8 @@ async function getWallpaper({ forceRefresh = false } = {}) {
       const unsplashKey = await Storage.getUnsplashKey();
       const collectionId = normalizeCollectionId(settings.unsplashCollectionId || "");
 
+      console.log("[Wallpaper] Unsplash config:", { hasKey: !!unsplashKey, collectionId });
+
       if (unsplashKey && collectionId) {
         for (let i = 0; i < 4; i++) {
           try {
@@ -369,9 +385,12 @@ async function getWallpaper({ forceRefresh = false } = {}) {
             }
             return { ...item, fromCache: false };
           } catch (e) {
+            console.error("[Wallpaper] Unsplash fetch error:", e.message);
             // continue to retry a few times, then fallback
           }
         }
+      } else {
+        console.warn("[Wallpaper] Unsplash not configured properly, falling back to Bing");
       }
       // Fallback to Bing if Unsplash fails or not configured
       for (let i = 0; i < 3; i++) {

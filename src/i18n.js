@@ -35,14 +35,14 @@ const STRINGS = {
     unsplashSubtitle: "Fill in Access Key and Collection ID to use Unsplash",
     unsplashKey: "Access Key",
     unsplashCollectionId: "Collection ID",
-    unsplashCollectionPlaceholder: "e.g. 123456",
+    unsplashCollectionPlaceholder: "e.g. 123456 or 123456,789012 (numbers only)",
     refreshPolicy: "Refresh Policy",
     refreshSubtitle: "Default: one fixed image per day",
     bgRefresh: "Background refresh",
     refreshDaily: "Daily (recommended)",
     refreshAlways: "Random each new tab",
     cacheAndBlock: "Cache & Blocklist",
-    cacheSubtitle: "For 'daily fixed' mode; reduces API calls",
+    cacheSubtitle: "Manage blocked images",
     clear: "Clear",
     clearCache: "Clear cache",
     clearBlock: "Clear blocklist",
@@ -88,7 +88,8 @@ const STRINGS = {
     weatherLonPlaceholder: "e.g. 121.4581",
     weatherAutoDetect: "Auto-detect location",
     weatherLocationDetected: "Location detected",
-    weatherLocationFailed: "Failed to detect location"
+    weatherLocationFailed: "Failed to detect location",
+    refreshWallpaper: "Refresh image"
   },
   zh: {
     // New tab page
@@ -126,14 +127,14 @@ const STRINGS = {
     unsplashSubtitle: "填写 Access Key 和 Collection ID 以使用 Unsplash",
     unsplashKey: "Access Key",
     unsplashCollectionId: "Collection ID",
-    unsplashCollectionPlaceholder: "例如：123456",
+    unsplashCollectionPlaceholder: "例如：123456 或 123456,789012（仅数字）",
     refreshPolicy: "刷新策略",
     refreshSubtitle: "默认每天固定一张（可切换）",
     bgRefresh: "背景刷新",
     refreshDaily: "每天固定一张（推荐）",
     refreshAlways: "每次打开随机",
     cacheAndBlock: "缓存与屏蔽",
-    cacheSubtitle: "用于“每天固定一张”、避免频繁打 API",
+    cacheSubtitle: "管理已屏蔽的图片",
     clear: "清空",
     clearCache: "清空缓存",
     clearBlock: "清空屏蔽列表",
@@ -179,7 +180,8 @@ const STRINGS = {
     weatherLonPlaceholder: "例如：121.4581",
     weatherAutoDetect: "自动获取位置",
     weatherLocationDetected: "位置已获取",
-    weatherLocationFailed: "无法获取位置"
+    weatherLocationFailed: "无法获取位置",
+    refreshWallpaper: "刷新图片"
   }
 };
 

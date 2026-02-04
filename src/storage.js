@@ -181,6 +181,18 @@ async function clearCaches() {
   await storageRemove([STORAGE_KEYS.BG_CACHE, STORAGE_KEYS.BING_CACHE, STORAGE_KEYS.EVENTS_CACHE, STORAGE_KEYS.NEWS_CACHE, STORAGE_KEYS.WEATHER_CACHE]);
 }
 
+async function clearNewsCache() {
+  await storageRemove([STORAGE_KEYS.NEWS_CACHE]);
+}
+
+async function clearEventsCache() {
+  await storageRemove([STORAGE_KEYS.EVENTS_CACHE]);
+}
+
+async function clearWallpaperCache() {
+  await storageRemove([STORAGE_KEYS.BG_CACHE, STORAGE_KEYS.BING_CACHE]);
+}
+
 async function clearBlocklist() {
   await storageRemove([STORAGE_KEYS.BG_BLOCKLIST]);
 }
@@ -205,5 +217,8 @@ window.CalendarExtStorage = {
   getBgBlocklist,
   setBgBlocklist,
   clearCaches,
+  clearNewsCache,
+  clearEventsCache,
+  clearWallpaperCache,
   clearBlocklist
 };
