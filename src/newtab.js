@@ -2,30 +2,6 @@ function $(id) {
   return document.getElementById(id);
 }
 
-function formatGregorian(date = new Date()) {
-  const y = date.getFullYear();
-  const m = date.getMonth() + 1;
-  const d = date.getDate();
-  return `${y}年${m}月${d}日`;
-}
-
-function formatGregorianISO(date = new Date()) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
-function formatWeekday(date = new Date()) {
-  const list = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-  return list[date.getDay()];
-}
-
-function formatWeekdayFull(date = new Date()) {
-  const list = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
-  return list[date.getDay()];
-}
-
 let __uiLang = "en";
 let __currentWallpaper = null;
 
@@ -77,29 +53,44 @@ function escapeHtml(s) {
     .replace(/'/g, "&#039;");
 }
 
-function renderCalendar() {
-  const d = new Date();
-  const weekdayEl = $("today-weekday");
-  if (weekdayEl) weekdayEl.textContent = "";
-  
-  const full = formatGregorian(d);
-  const weekdayFull = formatWeekdayFull(d);
-  const dayEl = $("today-day");
-  if (dayEl) {
-    dayEl.textContent = __uiLang === "zh" ? `${full} ${weekdayFull}` : `${formatGregorianISO(d)} ${weekdayFull}`;
-  }
+function renderCalendar(settings, d = new Date()) {
+  $("today-day").textContent = window.CalendarExtI18n.formatCalendarDate(d, settings);
+  renderDualClock(settings, d);
+
+  const lunarEl = $("today-lunar");
+  lunarEl.hidden = settings.lunarEnabled !== true;
+  if (lunarEl.hidden) return;
 
   try {
     const lunar = window.CalendarExtLunar.toLunar(d);
     const prettyMonth = prettifyLunarMonth(lunar.monthCn || "");
     const prettyDay = prettifyLunarDay(lunar.dayCn || "");
     const zodiacYear = lunar.zodiac ? `${lunar.zodiac}年` : "";
-    const lunarEl = $("today-lunar");
-    if (lunarEl) lunarEl.textContent = `农历 ${prettyMonth}${prettyDay} ${zodiacYear}`;
+    lunarEl.textContent = `农历 ${prettyMonth}${prettyDay} ${zodiacYear}`;
   } catch (e) {
-    const lunarEl = $("today-lunar");
-    if (lunarEl) lunarEl.textContent = "农历：—";
+    lunarEl.textContent = "农历：—";
   }
+}
+
+function renderDualClock(settings, date) {
+  const clock = $("dual-clock");
+  clock.hidden = settings.dualClockEnabled !== true;
+  if (clock.hidden) return;
+
+  const labels = {
+    "Asia/Shanghai": "clockBeijing",
+    "Europe/London": "clockLondon",
+    "America/New_York": "clockNewYork",
+    "Asia/Tokyo": "clockTokyo",
+    UTC: null
+  };
+  const zone = Object.hasOwn(labels, settings.secondTimeZone) ? settings.secondTimeZone : "Asia/Shanghai";
+  const label = key => window.CalendarExtI18n.t(settings.uiLang, key);
+  const locale = settings.uiLang === "zh" ? "zh-CN" : "en-GB";
+  const options = { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" };
+  const localTime = new Intl.DateTimeFormat(locale, options).format(date);
+  const secondTime = new Intl.DateTimeFormat(locale, { ...options, timeZone: zone }).format(date);
+  clock.textContent = `${label("clockLocal")} ${localTime} · ${labels[zone] ? label(labels[zone]) : zone} ${secondTime}`;
 }
 
 function prettifyLunarMonth(monthCn) {
@@ -308,185 +299,191 @@ async function renderEvents() {
   }
 }
 
-// Updated renderNews to support multiple feeds and tabs
 async function renderNews() {
   const Storage = window.CalendarExtStorage;
   const I18n = window.CalendarExtI18n;
   const settings = await Storage.getSettings();
-  const uiLang = settings.uiLang || "en";
-  const feeds = (settings.rssFeeds || [])
-    .map((item) => {
-      if (!item) return null;
-      if (typeof item === "string") {
-        const url = item.trim();
-        return url ? { title: "", url } : null;
-      }
-      if (typeof item === "object") {
-        const url = String(item.url || "").trim();
-        const title = String(item.title || "").trim();
-        return url ? { title, url } : null;
-      }
-      return null;
-    })
-    .filter(Boolean);
-  const timeZone = settings.timeZone || "Asia/Shanghai";
-  const dateKey = Storage.nowISODateKey();
-
-  const tabsContainer = $("news-tabs");
+  const { rssFeeds: feeds, uiLang, timeZone } = settings;
+  const tabs = $("news-tabs");
   const status = $("news-status");
   const list = $("news-list");
   const source = $("news-source");
-  
-  if (!feeds.length) {
-     status.textContent = "No RSS feeds configured";
-     status.hidden = false;
-     return;
-  }
-
-  // 1. Setup UI for tabs
-  tabsContainer.innerHTML = "";
+  const translate = key => I18n.t(uiLang, key);
+  const cacheTtl = 20 * 60 * 1000;
   let activeIndex = 0;
-  let allData = []; // Will be populated after fetch
-  
-  // Create tab elements
-  feeds.forEach((feed, idx) => {
-      const url = feed.url;
-      const el = document.createElement("div");
-      el.className = "news-tab-item";
-      // Temporary name until loaded
-      let shortName = feed.title || "";
-      try {
-        if (!shortName) {
-          shortName = new URL(url).hostname.replace("www.", "").split(".")[0];
-        }
-      } catch(e) {
-        if (!shortName) shortName = "RSS";
-      }
-      // Special casing common ones for nicer names
-      if (shortName === "chinanews") shortName = "中新网";
-      if (shortName === "36kr") shortName = "36Kr";
-      if (shortName === "voachinese") shortName = "VOA";
-      
-      el.textContent = shortName;
-      el.dataset.index = idx;
-      el.dataset.url = url;
-      
-      // Hover event to switch tab (only if data is loaded)
-      el.addEventListener("mouseenter", () => {
-          if (allData.length > 0) {
-              switchTab(idx);
-          }
-      });
-      
-      tabsContainer.appendChild(el);
+  let selectedByUser = false;
+
+  if (!feeds.length) {
+    status.textContent = translate("rssNoFeeds");
+    status.hidden = false;
+    return;
+  }
+
+  const cache = await Storage.getNewsFeedCaches(feeds.map(feed => feed.url)).catch(() => []);
+  const states = feeds.map((_, index) => ({
+    data: cache[index],
+    loading: !cache[index]?.cachedAt || Date.now() - cache[index].cachedAt >= cacheTtl,
+    failed: false
+  }));
+
+  tabs.replaceChildren();
+  feeds.forEach((feed, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "news-tab-item";
+    button.textContent = feed.title || rssTabName(feed.url);
+    const select = () => {
+      selectedByUser = true;
+      activeIndex = index;
+      renderActiveFeed();
+    };
+    button.addEventListener("click", select);
+    button.addEventListener("mouseenter", select);
+    tabs.appendChild(button);
   });
+  setupNewsTabNavigation(tabs, translate);
 
-  // 2. Fetch logic (Parallel)
-  status.textContent = I18n.t(uiLang, "loading");
-  status.hidden = false;
-  
-  // Try to load from cache first
-  const cacheByDay = await Storage.getNewsCacheByDay();
-  if (!cacheByDay[dateKey]) cacheByDay[dateKey] = {};
-  
-  // Helper to get feed data (cache -> network)
-  const CACHE_TTL = 20 * 60 * 1000; // 20 minutes
-  async function getFeedData(url) {
-      // Check memory/storage cache (20 min TTL)
-      const cached = cacheByDay[dateKey] && cacheByDay[dateKey][url];
-      const isValid = cached && cached.items && cached.items.length &&
-                      cached.cachedAt && (Date.now() - cached.cachedAt < CACHE_TTL);
-      if (isValid) {
-          return { ...cached, fromCache: true };
-      }
-      try {
-          const res = await window.CalendarExtNews.getRssNews({ url, limit: 30, timeZone });
-          if (res.success) {
-              // update cache structure: dateKey -> url -> data
-              cacheByDay[dateKey][url] = { 
-                  items: res.items, 
-                  sourceName: res.sourceName, 
-                  sourceUrl: res.sourceUrl, 
-                  cachedAt: Date.now() 
-              };
-              await Storage.setNewsCacheByDay(cacheByDay);
-              return res;
-          } else {
-             console.error("RSS Fetch Failed:", res.error);
-             return { items: [], sourceName: "Error", error: res.error, sourceUrl: url };
-          }
-      } catch(e) { 
-          console.error(e); 
-          return { items: [], sourceName: "Error", error: String(e), sourceUrl: url };
-      }
-  }
+  const firstCached = states.findIndex(state => state.data?.items?.length);
+  if (firstCached >= 0) activeIndex = firstCached;
+  new ResizeObserver(() => fitNewsList(list)).observe(list);
+  renderActiveFeed();
 
-  // Use allSettled to ensure we don't block everything if one fails
-  const feedPromises = feeds.map((feed) => getFeedData(feed.url));
-  
-  // Wait for all to load
-  const results = await Promise.allSettled(feedPromises);
-  allData = results.map(r => r.status === 'fulfilled' ? r.value : { items: [], sourceName: "Error" });
-  
-  status.hidden = true;
+  await Promise.all(feeds.map(async (feed, index) => {
+    const state = states[index];
+    if (!state.loading) return;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    let refreshed;
+    try {
+      refreshed = await window.CalendarExtNews.getRssNews({
+        url: feed.url, limit: 30, timeZone
+      }, controller.signal);
+      if (refreshed.success) state.data = { ...refreshed, cachedAt: Date.now() };
+      else state.failed = true;
+    } catch {
+      state.failed = true;
+    } finally {
+      clearTimeout(timeout);
+      state.loading = false;
+    }
 
-  function switchTab(idx) {
-      activeIndex = idx;
-      // update active class
-      Array.from(tabsContainer.children).forEach((el, i) => {
-          if (i === idx) el.classList.add("active");
-          else el.classList.remove("active");
+    if (!selectedByUser && !states[activeIndex].data?.items?.length && state.data?.items?.length) {
+      activeIndex = index;
+    }
+    if (index === activeIndex) renderActiveFeed();
+
+    if (refreshed?.success) {
+      await Storage.setNewsFeedCache(feed.url, state.data).catch(error => {
+        console.warn("Could not cache RSS feed", error);
       });
-      
-      const data = allData[idx];
-      if (!data || !data.items || !data.items.length) {
-          list.innerHTML = `<li><span class='muted'>${data && data.error ? "Load failed" : "No news available"}</span></li>`;
-          list.hidden = false;
-          source.hidden = true;
-          return;
-      }
-      
-      fillNews(data.items, data.sourceUrl);
-      
-      // Update source link
-      source.innerHTML = `${I18n.t(uiLang, "eventsSource")}：<a href="${data.sourceUrl}" target="_blank" rel="noopener">${escapeHtml(data.sourceName)}</a>`;
-      source.hidden = false;
-  }
+    }
+  }));
 
-  function fillNews(items, feedUrl) {
-    list.innerHTML = "";
-    // Different truncation for VOA
-    const titleMax = /voanews\.com/i.test(feedUrl || "") ? 43 : 23;
-    
-    for (const it of items || []) {
+  function renderActiveFeed() {
+    Array.from(tabs.children).forEach((tab, index) => {
+      tab.classList.toggle("active", index === activeIndex);
+      tab.setAttribute("aria-pressed", String(index === activeIndex));
+    });
+
+    const { data, loading, failed } = states[activeIndex];
+    const url = feeds[activeIndex].url;
+    const items = data?.items || [];
+    status.hidden = Boolean(items.length) && !failed;
+    status.textContent = items.length
+      ? (failed ? translate("rssCached") : "")
+      : translate(loading ? "loading" : failed ? "rssLoadFailed" : "rssNoItems");
+    list.hidden = !items.length;
+    list.replaceChildren();
+    source.hidden = !items.length;
+    source.replaceChildren();
+    if (!items.length) return;
+
+    const titleMax = /voanews.com/i.test(url) ? 43 : 23;
+    for (const item of items) {
       const li = document.createElement("li");
-      const fullTitle = String(it.title || "");
-      const showTitle = truncateWithEllipsis(fullTitle, titleMax);
-      const link = it.link || "";
-      const date = it.date ? `<span class="news-date muted">${escapeHtml(it.date)}</span>` : "";
-      
-      if (link) {
-        li.innerHTML = `<a href="${link}" target="_blank" rel="noopener" title="${escapeHtml(fullTitle)}">${escapeHtml(
-          showTitle
-        )}</a> ${date}`;
-      } else {
-        li.innerHTML = `<span title="${escapeHtml(fullTitle)}">${escapeHtml(showTitle)}</span> ${date}`;
+      const title = String(item.title || "");
+      const link = rssLink(item.link, url);
+      const label = link || document.createElement("span");
+      label.title = title;
+      label.textContent = truncateWithEllipsis(title, titleMax);
+      li.appendChild(label);
+      if (item.date) {
+        const date = document.createElement("span");
+        date.className = "news-date muted";
+        date.textContent = item.date;
+        li.append(" ", date);
       }
       list.appendChild(li);
     }
-    list.hidden = false;
+    const link = rssLink(url);
+    if (link) {
+      link.textContent = data.sourceName || "RSS";
+      source.append(translate("eventsSource") + " · ", link);
+    }
+    fitNewsList(list);
+  }
+}
 
-    requestAnimationFrame(() => {
-      let guard = 0;
-      while (list.scrollHeight > list.clientHeight && list.lastElementChild && guard < 200) {
-        list.removeChild(list.lastElementChild);
-        guard++;
-      }
+function setupNewsTabNavigation(tabs, translate) {
+  const navigation = $("news-tab-navigation");
+  const previous = $("news-tabs-prev");
+  const next = $("news-tabs-next");
+  const controls = [[previous, -1, "rssScrollLeft"], [next, 1, "rssScrollRight"]];
+
+  for (const [button, direction, key] of controls) {
+    button.title = translate(key);
+    button.setAttribute("aria-label", button.title);
+    button.addEventListener("click", () => {
+      tabs.scrollBy({ left: direction * tabs.clientWidth, behavior: "instant" });
     });
   }
 
-  // Initial render
-  switchTab(0);
+  function update() {
+    const overflow = tabs.scrollWidth > navigation.clientWidth;
+    previous.hidden = next.hidden = !overflow;
+    previous.disabled = tabs.scrollLeft <= 0;
+    next.disabled = tabs.scrollLeft + tabs.clientWidth >= tabs.scrollWidth - 1;
+  }
+
+  tabs.addEventListener("scroll", update);
+  new ResizeObserver(update).observe(navigation);
+  update();
+}
+
+function fitNewsList(list) {
+  if (list.hidden) return;
+  const rows = Array.from(list.children);
+  rows.forEach(row => { row.hidden = false; });
+  const bottom = list.getBoundingClientRect().bottom;
+  const firstOverflow = rows.findIndex(row => row.getBoundingClientRect().bottom > bottom);
+  if (firstOverflow >= 0) {
+    rows.slice(firstOverflow).forEach(row => { row.hidden = true; });
+  }
+}
+
+function rssTabName(url) {
+  try {
+    const name = new URL(url).hostname.replace(/^www./, "").split(".")[0];
+    const labels = { chinanews: "中新网", "36kr": "36Kr", voachinese: "VOA" };
+    return Object.hasOwn(labels, name) ? labels[name] : name;
+  } catch {
+    return "RSS";
+  }
+}
+
+function rssLink(value, base) {
+  if (!value) return null;
+  try {
+    const url = new URL(value, base);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+    const link = document.createElement("a");
+    link.href = url.href;
+    link.target = "_blank";
+    link.rel = "noopener";
+    return link;
+  } catch {
+    return null;
+  }
 }
 
 async function renderWallpaper({ forceRefresh = false } = {}) {
@@ -498,10 +495,12 @@ async function renderWallpaper({ forceRefresh = false } = {}) {
 }
 
 async function main() {
+  let settings = window.CalendarExtStorage.DEFAULT_SETTINGS;
   try {
-    const settings = await window.CalendarExtStorage.getSettings();
+    settings = await window.CalendarExtStorage.getSettings();
     const uiLang = settings.uiLang || "en";
     __uiLang = uiLang;
+    document.documentElement.lang = uiLang;
     
     const labelOnThisDay = $("label-onthisday");
     if (labelOnThisDay) labelOnThisDay.textContent = window.CalendarExtI18n.t(uiLang, "onThisDay");
@@ -544,8 +543,11 @@ async function main() {
     console.error(e);
   }
 
-  renderCalendar();
-  setInterval(renderCalendar, 60 * 1000);
+  function tickCalendar() {
+    renderCalendar(settings);
+    setTimeout(tickCalendar, 60000 - Date.now() % 60000);
+  }
+  tickCalendar();
 
   // Render weather (non-blocking, runs in background)
   renderWeather().catch(e => console.error("Weather render error:", e));

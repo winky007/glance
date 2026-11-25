@@ -11,8 +11,14 @@ const STORAGE_KEYS = {
   WEATHER_CACHE: "weatherCache"
 };
 
+const NEWS_FEED_CACHE_PREFIX = "rssCache:";
+
 const DEFAULT_SETTINGS = {
   uiLang: "en", // en | zh
+  dateFormat: "auto",
+  lunarEnabled: false,
+  dualClockEnabled: false,
+  secondTimeZone: "Asia/Shanghai",
   eventsLang: "en", // Wikipedia language code, e.g. en/zh/ja...
   bgRefresh: "always", // daily | always
   wallpaperSource: "bing", // local | uploaded | bing | unsplash
@@ -159,13 +165,21 @@ async function setEventsCacheByDay(cache) {
   await storageSet({ [STORAGE_KEYS.EVENTS_CACHE]: cache || {} });
 }
 
-async function getNewsCacheByDay() {
-  const res = await storageGet([STORAGE_KEYS.NEWS_CACHE]);
-  return res[STORAGE_KEYS.NEWS_CACHE] || {};
+async function getNewsFeedCaches(urls) {
+  const keys = urls.map(url => NEWS_FEED_CACHE_PREFIX + url);
+  const res = await storageGet([STORAGE_KEYS.NEWS_CACHE, ...keys]);
+  const legacyDays = Object.values(res[STORAGE_KEYS.NEWS_CACHE] || {});
+  return urls.map((url, i) => {
+    if (res[keys[i]]) return res[keys[i]];
+    return legacyDays.reduce((latest, day) => {
+      const entry = day?.[url];
+      return entry && (!latest || entry.cachedAt > latest.cachedAt) ? entry : latest;
+    }, null);
+  });
 }
 
-async function setNewsCacheByDay(cache) {
-  await storageSet({ [STORAGE_KEYS.NEWS_CACHE]: cache || {} });
+async function setNewsFeedCache(url, data) {
+  await storageSet({ [NEWS_FEED_CACHE_PREFIX + url]: data });
 }
 
 async function getBgBlocklist() {
@@ -178,11 +192,15 @@ async function setBgBlocklist(list) {
 }
 
 async function clearCaches() {
-  await storageRemove([STORAGE_KEYS.BG_CACHE, STORAGE_KEYS.BING_CACHE, STORAGE_KEYS.EVENTS_CACHE, STORAGE_KEYS.NEWS_CACHE, STORAGE_KEYS.WEATHER_CACHE]);
+  await clearNewsCache();
+  await storageRemove([STORAGE_KEYS.BG_CACHE, STORAGE_KEYS.BING_CACHE, STORAGE_KEYS.EVENTS_CACHE, STORAGE_KEYS.WEATHER_CACHE]);
 }
 
 async function clearNewsCache() {
-  await storageRemove([STORAGE_KEYS.NEWS_CACHE]);
+  if (!isChromeStorageAvailable()) return;
+  const local = chrome.storage.local;
+  const keys = local.getKeys ? await local.getKeys() : Object.keys(await local.get(null));
+  await storageRemove([STORAGE_KEYS.NEWS_CACHE, ...keys.filter(key => key.startsWith(NEWS_FEED_CACHE_PREFIX))]);
 }
 
 async function clearEventsCache() {
@@ -212,8 +230,8 @@ window.CalendarExtStorage = {
   setBingImageArchiveByDay,
   getEventsCacheByDay,
   setEventsCacheByDay,
-  getNewsCacheByDay,
-  setNewsCacheByDay,
+  getNewsFeedCaches,
+  setNewsFeedCache,
   getBgBlocklist,
   setBgBlocklist,
   clearCaches,

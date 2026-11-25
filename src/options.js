@@ -4,6 +4,37 @@ function $(id) {
 
 let __currentLang = "en";
 
+const RSS_RECOMMENDATIONS = {
+  zh: [
+    {
+      title: "中新网",
+      url: "https://www.chinanews.com.cn/rss",
+      feeds: [
+        ["即时新闻", "scroll-news"], ["要闻导读", "importnews"], ["时政新闻", "china"],
+        ["东西问", "dxw"], ["国际新闻", "world"], ["社会新闻", "society"],
+        ["财经新闻", "finance"], ["生活", "life"], ["健康", "jk"],
+        ["大湾区", "dwq"], ["华人", "chinese"], ["文娱新闻", "culture"],
+        ["体育新闻", "sports"], ["视频", "sp"], ["图片", "photo"],
+        ["创意", "chuangyi"], ["直播", "zhibo"], ["教育", "edu"], ["法治", "fz"]
+      ].map(([title, slug]) => ({ title, url: `https://www.chinanews.com.cn/rss/${slug}.xml` }))
+    },
+    { title: "IT之家", url: "https://www.ithome.com/rss/" }
+  ],
+  en: [
+    { title: "The Guardian · World", url: "https://www.theguardian.com/world/rss" },
+    {
+      title: "VOA News",
+      url: "https://www.voanews.com/rssfeeds",
+      feeds: [
+        ["All About America", "zb__qtl-vomx-tpeqrtqq"],
+        ["US", "zqboml-vomx-tpeivmy"],
+        ["East Asia", "zobo_l-vomx-tpepvmv"],
+        ["China News", "zmjuqtl-vomx-tpey_jqq"]
+      ].map(([title, slug]) => ({ title, url: `https://www.voanews.com/api/${slug}` }))
+    }
+  ]
+};
+
 function t(key) {
   const I18n = window.CalendarExtI18n;
   return I18n ? I18n.t(__currentLang, key) : key;
@@ -25,6 +56,7 @@ function normalizeRssFeed(item) {
 
 function applyTranslations(lang) {
   __currentLang = lang || "en";
+  document.documentElement.lang = __currentLang;
   // Translate all elements with data-i18n attribute
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.getAttribute("data-i18n");
@@ -44,6 +76,82 @@ function applyTranslations(lang) {
   });
   // Update page title
   document.title = t("settingsTitle") + " - Calendar New Tab";
+  renderDateFormatPreview();
+  updateSubscribeButtons();
+}
+
+function renderDateFormatPreview() {
+  const preview = $("dateFormatPreview");
+  const dateFormat = $("dateFormat").value;
+  preview.hidden = dateFormat !== "auto";
+  if (preview.hidden) {
+    preview.textContent = "";
+    return;
+  }
+
+  const locale = navigator.language || "en-US";
+  const settings = { uiLang: __currentLang, dateFormat };
+  const date = window.CalendarExtI18n.formatCalendarDate(new Date(), settings, locale);
+  preview.textContent = t("dateFormatPreview").replace("{locale}", locale).replace("{date}", date);
+}
+
+function renderRssRecommendations(lang) {
+  const list = $(`rssRecommendations-${lang}`);
+  list.replaceChildren();
+  for (const feed of RSS_RECOMMENDATIONS[lang]) {
+    const item = document.createElement("li");
+    if (feed.feeds) {
+      const details = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = feed.title;
+      const directory = document.createElement("a");
+      directory.href = feed.url;
+      directory.target = "_blank";
+      directory.rel = "noopener";
+      directory.dataset.i18n = "rssOpenDirectory";
+      const channels = document.createElement("div");
+      channels.className = "rss-recommendation-channels";
+      feed.feeds.forEach(channel => channels.appendChild(createSubscribeButton(channel)));
+      details.append(summary, directory, channels);
+      item.appendChild(details);
+    } else {
+      item.appendChild(createSubscribeButton(feed));
+    }
+    list.appendChild(item);
+  }
+}
+
+function createSubscribeButton(feed) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "btn btn-ghost";
+  button.dataset.feedUrl = feed.url;
+  button.dataset.feedTitle = feed.title;
+  button.addEventListener("click", () => {
+    if (readRssForm().some(({ url }) => url === feed.url)) return;
+    $("rssFeedsList").appendChild(createRssRow(feed));
+    updateSubscribeButtons();
+    saveForm().catch(() => showToast(t("rssSaveFailed"), "error"));
+  });
+  return button;
+}
+
+function updateSubscribeButtons() {
+  const urls = new Set(readRssForm().map(({ url }) => url));
+  $("rssRecommendations").querySelectorAll("[data-feed-url]").forEach(button => {
+    button.disabled = urls.has(button.dataset.feedUrl);
+    const action = t(button.disabled ? "rssSubscribed" : "rssSubscribe");
+    button.textContent = `${button.dataset.feedTitle} · ${action}`;
+  });
+}
+
+function readRssForm() {
+  return Array.from(document.querySelectorAll(".rss-item"))
+    .map(row => normalizeRssFeed({
+      title: row.querySelector(".rss-title").value,
+      url: row.querySelector(".rss-input").value
+    }))
+    .filter(Boolean);
 }
 
 function clampInt(n, min, max, fallback) {
@@ -69,10 +177,14 @@ function createRssRow(url) {
     <button class="rss-drag-handle" type="button" title="Drag to reorder" aria-label="Drag to reorder" draggable="true">
       <span></span><span></span><span></span>
     </button>
-    <input type="text" value="${feed.title}" class="rss-title" data-i18n-placeholder="rssTitlePlaceholder" placeholder="Title (optional)" />
-    <input type="text" value="${feed.url}" class="rss-input" style="flex:1" />
+    <input type="text" class="rss-title" data-i18n-placeholder="rssTitlePlaceholder" />
+    <input type="text" class="rss-input" style="flex:1" />
     <button class="btn btn-ghost btn-remove-rss" type="button" title="Remove">×</button>
   `;
+  const titleInput = row.querySelector(".rss-title");
+  titleInput.value = feed.title;
+  titleInput.placeholder = t("rssTitlePlaceholder");
+  row.querySelector(".rss-input").value = feed.url;
 
   row.querySelectorAll("input").forEach((input) => {
     input.addEventListener("change", () => saveForm().catch(() => {}));
@@ -109,6 +221,13 @@ async function loadForm() {
   renderRssList(s.rssFeeds || []);
 
   $("uiLang").value = s.uiLang || "en";
+  $("dateFormat").value = s.dateFormat;
+  if (!$("dateFormat").value) $("dateFormat").value = "auto";
+  $("lunarEnabled").checked = s.lunarEnabled === true;
+  $("dualClockEnabled").checked = s.dualClockEnabled === true;
+  $("secondTimeZone").value = s.secondTimeZone || "Asia/Shanghai";
+  if (!$("secondTimeZone").value) $("secondTimeZone").value = "Asia/Shanghai";
+  syncDualClockUi();
   $("eventsLang").value = s.eventsLang || "en";
   $("onThisDaySource").value = s.onThisDaySource || "baike";
   $("bgRefresh").value = s.bgRefresh || "daily";
@@ -122,6 +241,8 @@ async function loadForm() {
   $("weatherLon").value = s.weatherLon || "";
 
   // Apply translations based on saved language
+  renderRssRecommendations("zh");
+  renderRssRecommendations("en");
   applyTranslations(s.uiLang || "en");
 
   syncOnThisDayUi();
@@ -129,7 +250,15 @@ async function loadForm() {
   syncWeatherUi();
 }
 
-async function saveForm() {
+let pendingFormSave = Promise.resolve();
+
+function saveForm() {
+  const save = pendingFormSave.then(persistForm);
+  pendingFormSave = save.catch(() => {});
+  return save;
+}
+
+async function persistForm() {
   const Storage = window.CalendarExtStorage;
   showToast(t("saving"), "info");
 
@@ -139,15 +268,13 @@ async function saveForm() {
   const unsplashCollectionId = $("unsplashCollectionId").value || "";
   
   // Collect RSS feeds
-  const rssFeeds = Array.from(document.querySelectorAll(".rss-item"))
-    .map((row) => {
-      const url = row.querySelector(".rss-input").value.trim();
-      const title = row.querySelector(".rss-title").value.trim();
-      return url ? { title, url } : null;
-    })
-    .filter(Boolean);
+  const rssFeeds = readRssForm();
 
   const uiLang = $("uiLang").value || "en";
+  const dateFormat = $("dateFormat").value || "auto";
+  const lunarEnabled = $("lunarEnabled").checked;
+  const dualClockEnabled = $("dualClockEnabled").checked;
+  const secondTimeZone = $("secondTimeZone").value;
   const eventsLang = ($("eventsLang").value || "en").trim() || "en";
   const onThisDaySource = $("onThisDaySource").value || "baike";
   const bgRefresh = $("bgRefresh").value || "daily";
@@ -161,17 +288,21 @@ async function saveForm() {
   const weatherLon = ($("weatherLon").value || "").trim();
   
   await Storage.setSettings({ 
-    unsplashCollectionId, rssFeeds, uiLang, eventsLang, onThisDaySource, bgRefresh, wallpaperSource,
+    unsplashCollectionId, rssFeeds, uiLang, dateFormat, lunarEnabled, dualClockEnabled, secondTimeZone,
+    eventsLang, onThisDaySource, bgRefresh, wallpaperSource,
     weatherEnabled, weatherLocMethod, weatherCity, weatherLat, weatherLon
   });
 
-  // Apply new language immediately
-  applyTranslations(uiLang);
+  updateSubscribeButtons();
 
   showToast(t("saved"), "success");
 }
 
 let toastTimer = null;
+
+function syncDualClockUi() {
+  $("secondTimeZoneField").hidden = !$("dualClockEnabled").checked;
+}
 function showToast(text, variant) {
   const el = $("toast");
   if (!el) return;
@@ -383,6 +514,9 @@ function main() {
   $("uiLang").addEventListener("change", () => {
     applyTranslations($("uiLang").value || "en");
   });
+  $("dateFormat").addEventListener("change", renderDateFormatPreview);
+  window.addEventListener("focus", renderDateFormatPreview);
+  $("dualClockEnabled").addEventListener("change", syncDualClockUi);
 
   // When wallpaper source changes, show/hide Unsplash config
   $("wallpaperSource").addEventListener("change", () => {
@@ -458,7 +592,7 @@ function main() {
             const list = $("rssFeedsList");
             const title = (newRssTitle && newRssTitle.value || "").trim();
             list.appendChild(createRssRow({ title, url }));
-            applyTranslations(__currentLang);
+            updateSubscribeButtons();
             
             newRssUrl.value = "";
             if (newRssTitle) newRssTitle.value = "";
@@ -639,7 +773,7 @@ function main() {
 
   // Auto-save with a small delay + hint
   const autoSave = debounce(() => saveForm().catch(() => {}), 450);
-  const ids = ["unsplashKey", "unsplashCollectionId", "uiLang", "eventsLang", "onThisDaySource", "bgRefresh", "wallpaperSource", "weatherEnabled", "weatherLocMethod", "weatherCity", "weatherLat", "weatherLon"];
+  const ids = ["unsplashKey", "unsplashCollectionId", "uiLang", "dateFormat", "lunarEnabled", "dualClockEnabled", "secondTimeZone", "eventsLang", "onThisDaySource", "bgRefresh", "wallpaperSource", "weatherEnabled", "weatherLocMethod", "weatherCity", "weatherLat", "weatherLon"];
   for (const id of ids) {
     const el = $(id);
     if (!el) continue;

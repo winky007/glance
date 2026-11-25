@@ -123,6 +123,7 @@ body:not(.options) .card-right:focus-within {
 .card-onthisday .card-header { flex: 0 0 auto; }
 #news-status, #onthisday-status { flex: 0 0 auto; }
 #news-list, #onthisday-list { flex: 1 1 auto; overflow: hidden; }
+#news-list { flex-basis: 0; min-height: 0; overflow: clip; }
 #news-source, #onthisday-source { flex: 0 0 auto; }
 
 .card-header {
@@ -147,6 +148,12 @@ body:not(.options) .card-right:focus-within {
   margin-bottom: 8px;
 }
 
+.calendar-clock {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
 .calendar-row-lunar {
   font-size: 15px;
   color: var(--muted);
@@ -163,6 +170,10 @@ body:not(.options) .card-right:focus-within {
   font-size: 14px;
   color: var(--muted);
   margin-left: 8px;
+}
+
+.weather-info[hidden] {
+  display: none;
 }
 
 .weather-icon {
@@ -230,17 +241,45 @@ body:not(.options) .card-right:focus-within {
   border-bottom: 1px dotted rgba(255,255,255,0.3);
 }
 
+.news-tab-navigation {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.news-tab-arrow {
+  flex: 0 0 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.news-tab-arrow:disabled { opacity: 0.4; cursor: default; }
+
 .news-tabs {
   display: flex;
+  flex: 1 1 auto;
   gap: 12px;
   overflow-x: auto;
   white-space: nowrap;
   scrollbar-width: none;
   align-items: center;
+  min-width: 0;
 }
 .news-tabs::-webkit-scrollbar { display: none; }
 
 .news-tab-item {
+  flex: 0 0 auto;
+  background: transparent;
+  font-family: inherit;
   color: var(--muted);
   cursor: pointer;
   font-size: 13px;
@@ -340,6 +379,12 @@ body.options { overflow: auto; background: #0b1020; }
 .field { display: grid; gap: 8px; margin-top: 10px; }
 .field[hidden] { display: none; }
 .field-label { font-weight: 700; font-size: 13px; color: rgba(255,255,255,0.86); }
+#lunarEnabled, .switch-checkbox { width: auto; }
+#rssRecommendations a { color: var(--text); }
+#rssRecommendations { display: grid; gap: 12px; margin: 8px 0; }
+#rssRecommendations h3 { color: var(--text); font-size: 14px; margin: 0 0 8px; }
+#rssRecommendations ul { display: grid; gap: 8px; margin: 0; padding-left: 0; list-style: none; }
+.rss-recommendation-channels { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 input, select {
   width: 100%;
   padding: 10px 12px;

@@ -14,11 +14,37 @@ const STRINGS = {
     language: "Language",
     languageSubtitle: "Supports English/Chinese; default English",
     uiLanguage: "UI Language",
+    dateFormat: "Date format",
+    dateFormatAuto: "Automatic (browser region)",
+    dateFormatPreview: "Browser locale {locale} · {date}",
+    dateFormatUk: "UK · Wednesday 25 November 2026",
+    dateFormatUs: "US · Wednesday, November 25, 2026",
+    dateFormatNumeric: "Numeric · 2026-11-25 Wednesday",
+    showLunar: "Show Chinese lunar date and zodiac (Beijing time)",
+    showDualClock: "Show local time and a second time zone",
+    secondTimeZone: "Second time zone",
+    clockLocal: "Local",
+    clockBeijing: "Beijing",
+    clockLondon: "London",
+    clockNewYork: "New York",
+    clockTokyo: "Tokyo",
     newsSection: "News",
-    newsSubtitle: "RSS feed URL (default: China News)",
+    newsSubtitle: "RSS feeds",
     rssUrl: "RSS URL",
     rssTitlePlaceholder: "Title (optional)",
     rssHint: "Recommended:",
+    rssChineseSection: "Chinese-language feeds",
+    rssEnglishSection: "English-language feeds",
+    rssOpenDirectory: "Open RSS directory",
+    rssSubscribe: "Subscribe",
+    rssSubscribed: "Subscribed",
+    rssSaveFailed: "Could not save the subscription",
+    rssNoFeeds: "Add an RSS feed in settings",
+    rssScrollLeft: "Scroll news sources left",
+    rssScrollRight: "Scroll news sources right",
+    rssNoItems: "No articles available",
+    rssLoadFailed: "This feed could not be loaded",
+    rssCached: "Showing saved articles because this feed could not refresh",
     rssFormatHint: "Supports RSS 2.0 and Atom formats",
     onThisDaySource: "On This Day data source",
     onThisDaySourceBaike: "Baidu Baike",
@@ -106,11 +132,37 @@ const STRINGS = {
     language: "语言",
     languageSubtitle: "支持中文/英文；默认英文",
     uiLanguage: "界面语言",
+    dateFormat: "日期格式",
+    dateFormatAuto: "自动（跟随浏览器地区）",
+    dateFormatPreview: "浏览器语言地区 {locale} · {date}",
+    dateFormatUk: "英式 · 星期三 25 November 2026",
+    dateFormatUs: "美式 · 星期三, November 25, 2026",
+    dateFormatNumeric: "数字日期 · 2026-11-25 星期三",
+    showLunar: "显示农历和生肖（北京时间）",
+    showDualClock: "显示本地时间和第二时区",
+    secondTimeZone: "第二时区",
+    clockLocal: "本地",
+    clockBeijing: "北京",
+    clockLondon: "伦敦",
+    clockNewYork: "纽约",
+    clockTokyo: "东京",
     newsSection: "新闻",
     newsSubtitle: "RSS 订阅地址",
     rssUrl: "RSS URL",
     rssTitlePlaceholder: "标题（可不填）",
     rssHint: "推荐：",
+    rssChineseSection: "中文语言区",
+    rssEnglishSection: "英文语言区",
+    rssOpenDirectory: "打开 RSS 目录",
+    rssSubscribe: "订阅",
+    rssSubscribed: "已订阅",
+    rssSaveFailed: "订阅保存失败",
+    rssNoFeeds: "请在设置中添加 RSS 订阅源",
+    rssScrollLeft: "向左查看订阅源",
+    rssScrollRight: "向右查看订阅源",
+    rssNoItems: "暂无新闻",
+    rssLoadFailed: "此订阅源加载失败",
+    rssCached: "刷新失败，正在显示上次保存的新闻",
     rssFormatHint: "支持 RSS 2.0 和 Atom 格式",
     onThisDaySource: "历史上的今天数据源",
     onThisDaySourceBaike: "百度百科",
@@ -190,6 +242,32 @@ function t(lang, key) {
   return (STRINGS[l] && STRINGS[l][key]) || (STRINGS.en && STRINGS.en[key]) || key;
 }
 
-window.CalendarExtI18n = { t };
+function formatGregorianISO(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function formatCalendarDate(date, settings, browserLocale = navigator.language) {
+  const language = settings.uiLang === "zh" ? "zh" : "en";
+  const region = new Intl.Locale(browserLocale || "en-US").maximize().region;
+  let format = settings.dateFormat;
+  if (language === "en" && region === "GB" && (!format || format === "auto")) {
+    format = "uk";
+  }
+
+  const weekday = date.toLocaleDateString(language, { weekday: "long" });
+  if (format === "numeric") return `${formatGregorianISO(date)} ${weekday}`;
+  if (format === "uk" || format === "us") {
+    const british = format === "uk";
+    const dateText = date.toLocaleDateString(british ? "en-GB" : "en-US", { dateStyle: "long" });
+    return `${weekday}${british ? " " : ", "}${dateText}`;
+  }
+
+  return date.toLocaleDateString(`${language}-${region}`, { dateStyle: "full", calendar: "gregory" });
+}
+
+window.CalendarExtI18n = { t, formatCalendarDate };
 
 

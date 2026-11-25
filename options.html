@@ -28,6 +28,34 @@
                     <option value="zh">中文</option>
                 </select>
             </label>
+            <div class="field">
+                <label class="field-label" for="dateFormat" data-i18n="dateFormat">Date format</label>
+                <select id="dateFormat" aria-describedby="dateFormatPreview">
+                    <option value="auto" data-i18n="dateFormatAuto">Automatic (browser region)</option>
+                    <option value="uk" data-i18n="dateFormatUk">UK · Wednesday 25 November 2026</option>
+                    <option value="us" data-i18n="dateFormatUs">US · Wednesday, November 25, 2026</option>
+                    <option value="numeric" data-i18n="dateFormatNumeric">Numeric · 2026-11-25 Wednesday</option>
+                </select>
+                <span id="dateFormatPreview" class="muted" aria-live="polite" hidden></span>
+            </div>
+            <label class="row">
+                <input id="lunarEnabled" type="checkbox" />
+                <span data-i18n="showLunar">Show Chinese lunar date and zodiac (Beijing time)</span>
+            </label>
+            <label class="row">
+                <input id="dualClockEnabled" class="switch-checkbox" type="checkbox" />
+                <span data-i18n="showDualClock">Show local time and a second time zone</span>
+            </label>
+            <label id="secondTimeZoneField" class="field" hidden>
+                <span class="field-label" data-i18n="secondTimeZone">Second time zone</span>
+                <select id="secondTimeZone">
+                    <option value="Asia/Shanghai" data-i18n="clockBeijing">Beijing</option>
+                    <option value="Europe/London" data-i18n="clockLondon">London</option>
+                    <option value="America/New_York" data-i18n="clockNewYork">New York</option>
+                    <option value="Asia/Tokyo" data-i18n="clockTokyo">Tokyo</option>
+                    <option value="UTC">UTC</option>
+                </select>
+            </label>
         </section>
 
         <section class="card">
@@ -47,11 +75,17 @@
                 </div>
 
                 <div class="muted" style="margin-top: 12px;">
-                    <span data-i18n="rssHint">Recommended:</span><br />
-                    https://36kr.com/feed （可以直接使用这个URL） <br/>
-                    https://www.chinanews.com.cn/rss/ (不要使用这个URL 打开这个链接复制里面的RSS地址) <br/>
-                    https://www.voachinese.com/rssfeeds (不要使用这个URL 打开这个链接复制里面的RSS地址) <br/>
-                    <br/>
+                    <span data-i18n="rssHint">Recommended:</span>
+                    <div id="rssRecommendations">
+                        <section aria-labelledby="rss-recommendations-zh-title">
+                            <h3 id="rss-recommendations-zh-title" data-i18n="rssChineseSection">Chinese-language feeds</h3>
+                            <ul id="rssRecommendations-zh"></ul>
+                        </section>
+                        <section aria-labelledby="rss-recommendations-en-title">
+                            <h3 id="rss-recommendations-en-title" data-i18n="rssEnglishSection">English-language feeds</h3>
+                            <ul id="rssRecommendations-en"></ul>
+                        </section>
+                    </div>
                     <span data-i18n="rssFormatHint">Supports RSS 2.0 and Atom formats. Most news sites provide RSS feeds.</span>
                 </div>
             </div>

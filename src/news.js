@@ -25,6 +25,9 @@ async function fetchRss(url, signal) {
 function parseRss(xmlText) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(xmlText, "text/xml");
+  if (!["rss", "feed", "RDF"].includes(doc.documentElement?.localName) || doc.querySelector("parsererror")) {
+    throw new Error("Invalid RSS or Atom feed");
+  }
   const out = [];
   
   // Try RSS 2.0 format first

@@ -21,11 +21,11 @@
         <div class="col-right">
             <!-- Calendar Card -->
             <section class="card card-right">
-                <div id="today-weekday" style="display:none"></div>
                 <div class="calendar-row-date" id="today-day"></div>
+                <div id="dual-clock" class="calendar-clock muted" hidden></div>
                 <div class="calendar-row-lunar">
-                    <span id="today-lunar"></span>
-                    <span class="weather-info" id="weather-info"></span>
+                    <span id="today-lunar" lang="zh" hidden></span>
+                    <span class="weather-info" id="weather-info" hidden></span>
                 </div>
             </section>
 
@@ -33,8 +33,11 @@
             <section class="card card-news">
                 <div class="card-header" style="padding-bottom: 4px;">
                     <div class="card-title" id="label-news" style="display:none">News</div> 
-                    <!-- We will insert tabs here via JS or container -->
-                    <div id="news-tabs" class="news-tabs"></div>
+                    <div id="news-tab-navigation" class="news-tab-navigation">
+                        <button id="news-tabs-prev" class="news-tab-arrow" type="button" aria-controls="news-tabs" hidden>‹</button>
+                        <div id="news-tabs" class="news-tabs"></div>
+                        <button id="news-tabs-next" class="news-tab-arrow" type="button" aria-controls="news-tabs" hidden>›</button>
+                    </div>
                 </div>
                 <div id="news-status" class="status"></div>
                 <ul id="news-list" class="news-list"></ul>
