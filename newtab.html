@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>New Tab</title>
+    <title data-i18n="newTabTitle">New Tab · Glance</title>
     <link rel="stylesheet" href="styles.css" />
 </head>
 
@@ -32,7 +32,7 @@
             <!-- News Card -->
             <section class="card card-news">
                 <div class="card-header" style="padding-bottom: 4px;">
-                    <div class="card-title" id="label-news" style="display:none">News</div> 
+                    <div class="card-title" id="label-news" data-i18n="news" style="display:none">News</div>
                     <div id="news-tab-navigation" class="news-tab-navigation">
                         <button id="news-tabs-prev" class="news-tab-arrow" type="button" aria-controls="news-tabs" hidden>‹</button>
                         <div id="news-tabs" class="news-tabs"></div>
@@ -47,7 +47,7 @@
             <!-- On This Day Card -->
             <section class="card card-onthisday">
                 <div class="card-header">
-                    <div class="card-title" id="label-onthisday">On This Day</div>
+                    <div class="card-title" id="label-onthisday" data-i18n="onThisDay">On This Day</div>
                     <div class="card-subtitle" id="onthisday-date"></div>
                 </div>
                 <div id="onthisday-status" class="status"></div>
@@ -57,8 +57,8 @@
             
             <div class="footer-actions">
                 <div class="credit" id="bg-credit" hidden></div>
-                <button id="btn-refresh-wallpaper" class="btn" title="Refresh image">Refresh</button>
-                <button id="btn-settings" class="btn-settings" title="Settings">Settings</button>
+                <button id="btn-refresh-wallpaper" class="btn" data-i18n="refreshWallpaper" data-i18n-title="refreshWallpaper" title="Refresh image">Refresh image</button>
+                <button id="btn-settings" class="btn-settings" data-i18n="settings" data-i18n-title="settings" title="Settings">Settings</button>
             </div>
         </div>
     </div>

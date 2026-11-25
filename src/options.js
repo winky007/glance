@@ -35,9 +35,8 @@ const RSS_RECOMMENDATIONS = {
   ]
 };
 
-function t(key) {
-  const I18n = window.CalendarExtI18n;
-  return I18n ? I18n.t(__currentLang, key) : key;
+function t(key, substitutions) {
+  return window.CalendarExtI18n.t(__currentLang, key, substitutions);
 }
 
 function normalizeRssFeed(item) {
@@ -55,27 +54,9 @@ function normalizeRssFeed(item) {
 }
 
 function applyTranslations(lang) {
-  __currentLang = lang || "en";
+  __currentLang = lang;
   document.documentElement.lang = __currentLang;
-  // Translate all elements with data-i18n attribute
-  document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const key = el.getAttribute("data-i18n");
-    if (key) {
-      // Special handling for option elements
-      if (el.tagName === "OPTION") {
-        el.textContent = t(key);
-      } else {
-        el.textContent = t(key);
-      }
-    }
-  });
-  // Translate placeholders
-  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
-    const key = el.getAttribute("data-i18n-placeholder");
-    if (key) el.placeholder = t(key);
-  });
-  // Update page title
-  document.title = t("settingsTitle") + " - Calendar New Tab";
+  window.CalendarExtI18n.translatePage(lang);
   renderDateFormatPreview();
   updateSubscribeButtons();
 }
@@ -92,7 +73,7 @@ function renderDateFormatPreview() {
   const locale = navigator.language || "en-US";
   const settings = { uiLang: __currentLang, dateFormat };
   const date = window.CalendarExtI18n.formatCalendarDate(new Date(), settings, locale);
-  preview.textContent = t("dateFormatPreview").replace("{locale}", locale).replace("{date}", date);
+  preview.textContent = t("dateFormatPreview", [locale, date]);
 }
 
 function renderRssRecommendations(lang) {
@@ -174,17 +155,17 @@ function createRssRow(url) {
   row.style.marginTop = "8px";
   const feed = normalizeRssFeed(url) || { title: "", url: "" };
   row.innerHTML = `
-    <button class="rss-drag-handle" type="button" title="Drag to reorder" aria-label="Drag to reorder" draggable="true">
+    <button class="rss-drag-handle" type="button" data-i18n-title="rssDrag" data-i18n-aria-label="rssDrag" draggable="true">
       <span></span><span></span><span></span>
     </button>
     <input type="text" class="rss-title" data-i18n-placeholder="rssTitlePlaceholder" />
     <input type="text" class="rss-input" style="flex:1" />
-    <button class="btn btn-ghost btn-remove-rss" type="button" title="Remove">×</button>
+    <button class="btn btn-ghost btn-remove-rss" type="button" data-i18n-title="rssRemove" data-i18n-aria-label="rssRemove">×</button>
   `;
   const titleInput = row.querySelector(".rss-title");
   titleInput.value = feed.title;
-  titleInput.placeholder = t("rssTitlePlaceholder");
   row.querySelector(".rss-input").value = feed.url;
+  window.CalendarExtI18n.translatePage(__currentLang, row);
 
   row.querySelectorAll("input").forEach((input) => {
     input.addEventListener("change", () => saveForm().catch(() => {}));
@@ -220,7 +201,7 @@ async function loadForm() {
   // Render RSS List
   renderRssList(s.rssFeeds || []);
 
-  $("uiLang").value = s.uiLang || "en";
+  $("uiLang").value = s.uiLang === "en" || s.uiLang === "zh" ? s.uiLang : "auto";
   $("dateFormat").value = s.dateFormat;
   if (!$("dateFormat").value) $("dateFormat").value = "auto";
   $("lunarEnabled").checked = s.lunarEnabled === true;
@@ -243,7 +224,7 @@ async function loadForm() {
   // Apply translations based on saved language
   renderRssRecommendations("zh");
   renderRssRecommendations("en");
-  applyTranslations(s.uiLang || "en");
+  await updateUiLanguage();
 
   syncOnThisDayUi();
   syncWallpaperSourceUi();
@@ -270,7 +251,7 @@ async function persistForm() {
   // Collect RSS feeds
   const rssFeeds = readRssForm();
 
-  const uiLang = $("uiLang").value || "en";
+  const uiLang = $("uiLang").value || "auto";
   const dateFormat = $("dateFormat").value || "auto";
   const lunarEnabled = $("lunarEnabled").checked;
   const dualClockEnabled = $("dualClockEnabled").checked;
@@ -397,12 +378,12 @@ async function loadLocalImagesList() {
   try {
     const ImageDB = window.CalendarExtImageDB;
     if (!ImageDB) {
-      list.innerHTML = '<div class="muted">ImageDB not available</div>';
+      list.textContent = t("imageDatabaseUnavailable");
       return;
     }
     const images = await ImageDB.getAllImages();
     if (!images || !images.length) {
-      list.innerHTML = '<div class="muted" data-i18n="noImagesUploaded">No images uploaded yet</div>';
+      list.innerHTML = '<div class="muted" data-i18n="noImagesUploaded"></div>';
       applyTranslations(__currentLang);
       return;
     }
@@ -410,41 +391,42 @@ async function loadLocalImagesList() {
       .map(
         (img) => `
       <div class="local-image-item">
-        <img src="${img.data}" alt="${img.name || "image"}" />
-        <button class="delete-btn" data-id="${img.id}" title="Delete">×</button>
+        <img src="${img.data}" data-i18n-alt="imageAlt" />
+        <button class="delete-btn" data-id="${img.id}" data-i18n-title="deleteImage" data-i18n-aria-label="deleteImage">×</button>
       </div>
     `
       )
       .join("");
+    window.CalendarExtI18n.translatePage(__currentLang, list);
     // Bind delete buttons
     list.querySelectorAll(".delete-btn").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         const id = Number(e.target.getAttribute("data-id"));
-        if (confirm(t("confirmDeleteImage") || "Delete this image?")) {
+        if (confirm(t("confirmDeleteImage"))) {
           try {
             await ImageDB.deleteImage(id);
             await loadLocalImagesList();
-            showToast(t("imageDeleted") || "Image deleted", "success");
+            showToast(t("imageDeleted"), "success");
           } catch (err) {
-            showToast(t("deleteFailed") || "Delete failed", "error");
+            showToast(t("deleteFailed"), "error");
           }
         }
       });
     });
   } catch (e) {
-    list.innerHTML = '<div class="muted">Error loading images</div>';
+    list.textContent = t("imageListFailed");
   }
 }
 
 async function handleFileUpload(files) {
   const ImageDB = window.CalendarExtImageDB;
   if (!ImageDB) {
-    showToast("ImageDB not available", "error");
+    showToast(t("imageDatabaseUnavailable"), "error");
     return;
   }
   const imageFiles = Array.from(files).filter((f) => f.type.startsWith("image/"));
   if (!imageFiles.length) {
-    showToast(t("noImageFiles") || "No image files selected", "error");
+    showToast(t("noImageFiles"), "error");
     return;
   }
   let success = 0;
@@ -459,10 +441,10 @@ async function handleFileUpload(files) {
   }
   await loadLocalImagesList();
   if (success > 0) {
-    showToast(`${success} image(s) uploaded`, "success");
+    showToast(t("imageUploadCount", [String(success)]), "success");
   }
   if (failed > 0) {
-    showToast(`${failed} image(s) failed`, "error");
+    showToast(t("imageFailedCount", [String(failed)]), "error");
   }
 }
 
@@ -470,13 +452,13 @@ async function exportImages() {
   try {
     const ImageDB = window.CalendarExtImageDB;
     if (!ImageDB) {
-      showToast(t("exportFailed") || "Export failed", "error");
+      showToast(t("exportFailed"), "error");
       return;
     }
-    const count = await ImageDB.exportImages();
-    showToast(t("exportSuccess") || `${count} image(s) exported`, "success");
+    await ImageDB.exportImages();
+    showToast(t("exportSuccess"), "success");
   } catch (e) {
-    showToast(t("exportFailed") || "Export failed", "error");
+    showToast(t("exportFailed"), "error");
   }
 }
 
@@ -484,7 +466,7 @@ async function importImages(file) {
   try {
     const ImageDB = window.CalendarExtImageDB;
     if (!ImageDB) {
-      showToast(t("importFailed") || "Import failed", "error");
+      showToast(t("importFailed"), "error");
       return;
     }
     const text = await file.text();
@@ -492,14 +474,20 @@ async function importImages(file) {
     const { imported, failed } = await ImageDB.importImages(jsonData);
     await loadLocalImagesList();
     if (imported > 0) {
-      showToast(t("importSuccess") || `${imported} image(s) imported`, "success");
+      showToast(t("imageImportCount", [String(imported)]), "success");
     }
     if (failed > 0) {
-      showToast(`${failed} image(s) failed`, "error");
+      showToast(t("imageFailedCount", [String(failed)]), "error");
     }
   } catch (e) {
-    showToast(t("importFailed") || "Import failed: invalid file", "error");
+    showToast(t("importFailed"), "error");
   }
+}
+
+async function updateUiLanguage() {
+  const preference = $("uiLang").value;
+  const language = await window.CalendarExtI18n.loadLanguage(preference);
+  if ($("uiLang").value === preference) applyTranslations(language);
 }
 
 function main() {
@@ -511,9 +499,7 @@ function main() {
   $("onThisDaySource").addEventListener("change", syncOnThisDayUi);
 
   // When language changes, immediately apply translations
-  $("uiLang").addEventListener("change", () => {
-    applyTranslations($("uiLang").value || "en");
-  });
+  $("uiLang").addEventListener("change", updateUiLanguage);
   $("dateFormat").addEventListener("change", renderDateFormatPreview);
   window.addEventListener("focus", renderDateFormatPreview);
   $("dualClockEnabled").addEventListener("change", syncDualClockUi);
@@ -719,7 +705,7 @@ function main() {
         
       } catch (e) {
         console.error("City search error:", e);
-        resultsContainer.innerHTML = `<div class="muted" style="color: #ef4444;">Error: ${e.message}</div>`;
+        resultsContainer.textContent = t("weatherSearchFailed");
       }
     });
     

@@ -14,7 +14,7 @@ const STORAGE_KEYS = {
 const NEWS_FEED_CACHE_PREFIX = "rssCache:";
 
 const DEFAULT_SETTINGS = {
-  uiLang: "en", // en | zh
+  uiLang: "auto", // auto | en | zh
   dateFormat: "auto",
   lunarEnabled: false,
   dualClockEnabled: false,

@@ -2,10 +2,9 @@ function $(id) {
   return document.getElementById(id);
 }
 
-let __uiLang = "en";
 let __currentWallpaper = null;
 
-function setBackground(item) {
+function setBackground(item, uiLang) {
   const bg = $("bg");
   const credit = $("bg-credit");
 
@@ -19,8 +18,10 @@ function setBackground(item) {
     bg.style.backgroundPosition = "center";
   }
 
-  if (item.creditText) {
-    const fullText = String(item.creditText);
+  const t = (key, args) => window.CalendarExtI18n.t(uiLang, key, args);
+  const creditArgs = item.creditArgs?.length ? item.creditArgs : [t("imageAlt")];
+  const fullText = item.creditKey ? t(item.creditKey, creditArgs) : String(item.creditText || "");
+  if (fullText) {
     const showText = truncateWithEllipsis(fullText, 30);
     if (item.creditUrl) {
       credit.innerHTML = `<a href="${item.creditUrl}" target="_blank" rel="noopener" title="${escapeHtml(
@@ -60,15 +61,26 @@ function renderCalendar(settings, d = new Date()) {
   const lunarEl = $("today-lunar");
   lunarEl.hidden = settings.lunarEnabled !== true;
   if (lunarEl.hidden) return;
+  lunarEl.lang = settings.uiLang;
+  const t = (key, args) => window.CalendarExtI18n.t(settings.uiLang, key, args);
 
   try {
     const lunar = window.CalendarExtLunar.toLunar(d);
-    const prettyMonth = prettifyLunarMonth(lunar.monthCn || "");
-    const prettyDay = prettifyLunarDay(lunar.dayCn || "");
-    const zodiacYear = lunar.zodiac ? `${lunar.zodiac}年` : "";
-    lunarEl.textContent = `农历 ${prettyMonth}${prettyDay} ${zodiacYear}`;
+    if (settings.uiLang === "zh") {
+      const month = prettifyLunarMonth(lunar.monthCn || "");
+      const day = prettifyLunarDay(lunar.dayCn || "");
+      const year = lunar.zodiac ? t("lunarZodiacYear", [lunar.zodiac]) : "";
+      lunarEl.textContent = [t("lunarPrefix"), month + day, year].filter(Boolean).join(" ");
+    } else {
+      const date = new Intl.DateTimeFormat("en-US-u-ca-chinese", {
+        timeZone: "Asia/Shanghai", month: "numeric", day: "numeric"
+      }).format(d);
+      const zodiac = "鼠牛虎兔龙蛇马羊猴鸡狗猪".indexOf(lunar.zodiac || " ");
+      const year = zodiac >= 0 ? t("lunarZodiacYear", [t(`zodiac${zodiac}`)]) : "";
+      lunarEl.textContent = [t("lunarPrefix") + " " + date, year].filter(Boolean).join(" · ");
+    }
   } catch (e) {
-    lunarEl.textContent = "农历：—";
+    lunarEl.textContent = t("lunarUnavailable");
   }
 }
 
@@ -122,16 +134,14 @@ function numberToLunarDayCn(n) {
   return prefix + num[ones];
 }
 
-async function renderWeather() {
+async function renderWeather(settings) {
   const weatherEl = $("weather-info");
   if (!weatherEl) {
     console.log("[Weather] Element not found");
     return;
   }
   
-  const Storage = window.CalendarExtStorage;
   const Weather = window.CalendarExtWeather;
-  const settings = await Storage.getSettings();
   
   console.log("[Weather] Settings:", {
     weatherEnabled: settings.weatherEnabled,
@@ -148,11 +158,12 @@ async function renderWeather() {
     return;
   }
   
-  const uiLang = settings.uiLang || "en";
+  const uiLang = settings.uiLang;
+  const t = (key, substitutions) => window.CalendarExtI18n.t(uiLang, key, substitutions);
   
   // Show loading state
   weatherEl.textContent = "⏳";
-  weatherEl.title = uiLang === "zh" ? "正在获取天气..." : "Loading weather...";
+  weatherEl.title = t("weatherLoading");
   weatherEl.hidden = false;
   
   console.log("[Weather] Fetching weather data...");
@@ -163,7 +174,7 @@ async function renderWeather() {
     
     if (!result.success) {
       // Show error icon with tooltip
-      weatherEl.innerHTML = `<span class="weather-error" title="${escapeHtml(result.errorMessage || result.error)}">📍❓</span>`;
+      weatherEl.innerHTML = `<span class="weather-error" title="${escapeHtml(result.errorMessage || t("weatherUnavailable"))}">📍❓</span>`;
       return;
     }
     
@@ -176,26 +187,28 @@ async function renderWeather() {
     let airQualityTitle = "";
     if (w.airQuality) {
       const aq = w.airQuality;
-      const aqLabel = uiLang === "zh" ? "空气" : "AQI";
-      airQualityHtml = `<span class="weather-airquality">${aqLabel}:${aq.icon}${aq.aqi}</span>`;
-      airQualityTitle = ` | ${uiLang === "zh" ? "空气质量" : "Air Quality"}: ${aq.level} (AQI ${aq.aqi})`;
+      const aqLabel = t("weatherAqiLabel");
+      airQualityHtml = `<span class="weather-airquality">${aqLabel} ${aq.icon} ${aq.aqi}</span>`;
+      airQualityTitle = ` | ${t("weatherAirQuality")}: ${aq.level} (AQI ${aq.aqi})`;
     }
     
     // Tomorrow's weather
     let tomorrowHtml = "";
     let tomorrowTitle = "";
     if (w.tomorrow) {
-      const t = w.tomorrow;
-      const tomorrowLabel = uiLang === "zh" ? "明" : "Tmr";
-      tomorrowHtml = `<span class="weather-tomorrow">${tomorrowLabel}:${t.icon}${Math.round(t.tempMin)}~${Math.round(t.tempMax)}°</span>`;
-      tomorrowTitle = ` | ${uiLang === "zh" ? "明天" : "Tomorrow"}: ${t.text} ${Math.round(t.tempMin)}~${Math.round(t.tempMax)}°C`;
+      const tomorrow = w.tomorrow;
+      const tomorrowLabel = t("weatherTomorrowShort");
+      tomorrowHtml = `<span class="weather-tomorrow">${tomorrowLabel} ${tomorrow.icon} ${Math.round(tomorrow.tempMin)}–${Math.round(tomorrow.tempMax)}°</span>`;
+      tomorrowTitle = ` | ${t("weatherTomorrow")}: ${tomorrow.text} ${Math.round(tomorrow.tempMin)}~${Math.round(tomorrow.tempMax)}°C`;
     }
     
     // Build weather display
     weatherEl.innerHTML = `
-      <span class="weather-icon" title="${escapeHtml(w.text)} (code:${w.weatherCode})">${w.icon}</span>
-      <span class="weather-temp">${tempStr}</span>
-      ${precipStr ? `<span class="weather-precip">${precipStr}</span>` : ""}
+      <span class="weather-current">
+        <span class="weather-icon" title="${escapeHtml(w.text + " · " + t("weatherCode", [String(w.weatherCode)]))}">${w.icon}</span>
+        <span class="weather-temp">${tempStr}</span>
+        ${precipStr ? `<span class="weather-precip">${precipStr}</span>` : ""}
+      </span>
       ${airQualityHtml}
       ${tomorrowHtml}
     `;
@@ -203,15 +216,15 @@ async function renderWeather() {
     
   } catch (e) {
     console.error("Weather error:", e);
-    weatherEl.innerHTML = `<span class="weather-error" title="${escapeHtml(String(e))}">⚠️</span>`;
+    weatherEl.innerHTML = `<span class="weather-error" title="${escapeHtml(t("weatherUnavailable"))}">⚠️</span>`;
   }
 }
 
-async function renderEvents() {
+async function renderEvents(settings) {
   const Storage = window.CalendarExtStorage;
   const I18n = window.CalendarExtI18n;
-  const settings = await Storage.getSettings();
-  const uiLang = settings.uiLang || "en";
+  const uiLang = settings.uiLang;
+  const translate = (key, substitutions) => I18n.t(uiLang, key, substitutions);
   const dateKey = Storage.nowISODateKey();
   const cacheKey = `${dateKey}__${settings.onThisDaySource || "baike"}`;
 
@@ -237,14 +250,14 @@ async function renderEvents() {
     }
     fillEvents(cached.events, settings.onThisDaySource);
     status.hidden = true;
-    source.textContent = `${I18n.t(uiLang, "eventsSource")}：${cached.source || "缓存"}`;
+    source.textContent = `${translate("eventsSource")} · ${eventSourceLabel(cached.source)}`;
     source.hidden = false;
     return; // Skip network request
   }
   
   // No valid cache, fetch from network
   status.hidden = false;
-  status.textContent = "加载中…";
+  status.textContent = translate("loading");
   list.hidden = true;
   source.hidden = true;
 
@@ -258,7 +271,7 @@ async function renderEvents() {
       await Storage.setEventsCacheByDay(cacheByDay);
       fillEvents(res.events, settings.onThisDaySource);
       status.hidden = true;
-      source.textContent = `${I18n.t(uiLang, "eventsSource")}：${res.source}`;
+      source.textContent = `${translate("eventsSource")} · ${eventSourceLabel(res.source)}`;
       source.hidden = false;
       return;
     }
@@ -273,6 +286,13 @@ async function renderEvents() {
   status.textContent = I18n.t(uiLang, "eventsUnavailable");
   list.hidden = true;
   source.hidden = true;
+
+  function eventSourceLabel(value) {
+    if (!value) return translate("eventsCached");
+    if (settings.onThisDaySource !== "wikipedia") return translate("onThisDaySourceBaike");
+    const language = /^Wikipedia[（(]([^）)]+)[）)]$/.exec(value)?.[1];
+    return language ? translate("eventsWikipediaCredit", [language]) : value;
+  }
 
   function fillEvents(events, sourceType) {
     list.innerHTML = "";
@@ -299,10 +319,9 @@ async function renderEvents() {
   }
 }
 
-async function renderNews() {
+async function renderNews(settings) {
   const Storage = window.CalendarExtStorage;
   const I18n = window.CalendarExtI18n;
-  const settings = await Storage.getSettings();
   const { rssFeeds: feeds, uiLang, timeZone } = settings;
   const tabs = $("news-tabs");
   const status = $("news-status");
@@ -499,10 +518,10 @@ function rssLink(value, base) {
   }
 }
 
-async function renderWallpaper({ forceRefresh = false } = {}) {
+async function renderWallpaper(uiLang, { forceRefresh = false } = {}) {
   const Wallpaper = window.CalendarExtWallpaper;
   const item = await Wallpaper.getWallpaper({ forceRefresh });
-  setBackground(item);
+  setBackground(item, uiLang);
   __currentWallpaper = item;
   return item;
 }
@@ -511,50 +530,44 @@ async function main() {
   let settings = window.CalendarExtStorage.DEFAULT_SETTINGS;
   try {
     settings = await window.CalendarExtStorage.getSettings();
-    const uiLang = settings.uiLang || "en";
-    __uiLang = uiLang;
-    document.documentElement.lang = uiLang;
-    
-    const labelOnThisDay = $("label-onthisday");
-    if (labelOnThisDay) labelOnThisDay.textContent = window.CalendarExtI18n.t(uiLang, "onThisDay");
-    
-    const settingsLabel = window.CalendarExtI18n.t(uiLang, "settings");
-    const btnSettings = $("btn-settings");
-    if (btnSettings) {
-      btnSettings.textContent = truncateWithEllipsis(settingsLabel, 30);
-      btnSettings.title = settingsLabel;
-      btnSettings.addEventListener("click", () => {
-        if (chrome && chrome.runtime && chrome.runtime.openOptionsPage) {
-          chrome.runtime.openOptionsPage();
-        } else {
-          window.open("options.html", "_blank");
-        }
-      });
-    }
-
-    const refreshLabel = window.CalendarExtI18n.t(uiLang, "refreshWallpaper");
-    const btnRefresh = $("btn-refresh-wallpaper");
-    if (btnRefresh) {
-      btnRefresh.textContent = truncateWithEllipsis(refreshLabel, 30);
-      btnRefresh.title = refreshLabel;
-      btnRefresh.addEventListener("click", async () => {
-        btnRefresh.disabled = true;
-        try {
-          await renderWallpaper({ forceRefresh: true });
-        } finally {
-          btnRefresh.disabled = false;
-        }
-      });
-    }
-    
-    const newsStatus = $("news-status");
-    if (newsStatus) newsStatus.textContent = window.CalendarExtI18n.t(uiLang, "loading");
-    
-    const onthisdayStatus = $("onthisday-status");
-    if (onthisdayStatus) onthisdayStatus.textContent = window.CalendarExtI18n.t(uiLang, "loading");
   } catch (e) {
     console.error(e);
   }
+
+  const I18n = window.CalendarExtI18n;
+  const uiLang = await I18n.loadLanguage(settings.uiLang);
+  settings = { ...settings, uiLang };
+  document.documentElement.lang = uiLang;
+  I18n.translatePage(uiLang);
+
+  const btnSettings = $("btn-settings");
+  if (btnSettings) {
+    btnSettings.addEventListener("click", () => {
+      if (chrome && chrome.runtime && chrome.runtime.openOptionsPage) {
+        chrome.runtime.openOptionsPage();
+      } else {
+        window.open("options.html", "_blank");
+      }
+    });
+  }
+
+  const btnRefresh = $("btn-refresh-wallpaper");
+  if (btnRefresh) {
+    btnRefresh.addEventListener("click", async () => {
+      btnRefresh.disabled = true;
+      try {
+        await renderWallpaper(uiLang, { forceRefresh: true });
+      } finally {
+        btnRefresh.disabled = false;
+      }
+    });
+  }
+
+  const newsStatus = $("news-status");
+  if (newsStatus) newsStatus.textContent = I18n.t(uiLang, "loading");
+
+  const onthisdayStatus = $("onthisday-status");
+  if (onthisdayStatus) onthisdayStatus.textContent = I18n.t(uiLang, "loading");
 
   function tickCalendar() {
     renderCalendar(settings);
@@ -563,9 +576,9 @@ async function main() {
   tickCalendar();
 
   // Render weather (non-blocking, runs in background)
-  renderWeather().catch(e => console.error("Weather render error:", e));
+  renderWeather(settings).catch(e => console.error("Weather render error:", e));
 
-  await Promise.all([renderNews(), renderEvents(), renderWallpaper()]);
+  await Promise.all([renderNews(settings), renderEvents(settings), renderWallpaper(uiLang)]);
 
   const credit = $("bg-credit");
   if (credit) {
@@ -574,7 +587,7 @@ async function main() {
       try {
         if (__currentWallpaper) {
           await window.CalendarExtWallpaper.blockCurrentWallpaper(__currentWallpaper);
-          await renderWallpaper({ forceRefresh: true });
+          await renderWallpaper(uiLang, { forceRefresh: true });
         }
       } catch (err) {
         // ignore

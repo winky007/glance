@@ -21,62 +21,61 @@
  */
 
 const WEATHER_CODE_MAP = {
-  0: { icon: "☀️", text: "晴", textEn: "Clear" },
-  1: { icon: "🌤️", text: "晴间多云", textEn: "Mainly Clear" },
-  2: { icon: "⛅", text: "多云", textEn: "Partly Cloudy" },
-  3: { icon: "☁️", text: "阴", textEn: "Overcast" },
-  45: { icon: "🌫️", text: "雾", textEn: "Fog" },
-  48: { icon: "🌫️", text: "雾凇", textEn: "Depositing Fog" },
-  51: { icon: "🌦️", text: "小毛毛雨", textEn: "Light Drizzle" },
-  53: { icon: "🌦️", text: "毛毛雨", textEn: "Drizzle" },
-  55: { icon: "🌦️", text: "密集毛毛雨", textEn: "Dense Drizzle" },
-  56: { icon: "🌧️", text: "冻毛毛雨", textEn: "Freezing Drizzle" },
-  57: { icon: "🌧️", text: "密集冻毛毛雨", textEn: "Dense Freezing Drizzle" },
-  61: { icon: "🌧️", text: "小雨", textEn: "Slight Rain" },
-  63: { icon: "🌧️", text: "中雨", textEn: "Moderate Rain" },
-  65: { icon: "🌧️", text: "大雨", textEn: "Heavy Rain" },
-  66: { icon: "🌧️", text: "小冻雨", textEn: "Light Freezing Rain" },
-  67: { icon: "🌧️", text: "大冻雨", textEn: "Heavy Freezing Rain" },
-  71: { icon: "🌨️", text: "小雪", textEn: "Slight Snow" },
-  73: { icon: "🌨️", text: "中雪", textEn: "Moderate Snow" },
-  75: { icon: "❄️", text: "大雪", textEn: "Heavy Snow" },
-  77: { icon: "🌨️", text: "雪粒", textEn: "Snow Grains" },
-  80: { icon: "🌧️", text: "小阵雨", textEn: "Slight Showers" },
-  81: { icon: "🌧️", text: "中阵雨", textEn: "Moderate Showers" },
-  82: { icon: "🌧️", text: "强阵雨", textEn: "Violent Showers" },
-  85: { icon: "🌨️", text: "小阵雪", textEn: "Slight Snow Showers" },
-  86: { icon: "🌨️", text: "大阵雪", textEn: "Heavy Snow Showers" },
-  95: { icon: "⛈️", text: "雷暴", textEn: "Thunderstorm" },
-  96: { icon: "⛈️", text: "雷暴伴小冰雹", textEn: "Thunderstorm with Hail" },
-  99: { icon: "⛈️", text: "雷暴伴大冰雹", textEn: "Thunderstorm with Heavy Hail" }
+  0: "☀️",
+  1: "🌤️",
+  2: "⛅",
+  3: "☁️",
+  45: "🌫️",
+  48: "🌫️",
+  51: "🌦️",
+  53: "🌦️",
+  55: "🌦️",
+  56: "🌧️",
+  57: "🌧️",
+  61: "🌧️",
+  63: "🌧️",
+  65: "🌧️",
+  66: "🌧️",
+  67: "🌧️",
+  71: "🌨️",
+  73: "🌨️",
+  75: "❄️",
+  77: "🌨️",
+  80: "🌧️",
+  81: "🌧️",
+  82: "🌧️",
+  85: "🌨️",
+  86: "🌨️",
+  95: "⛈️",
+  96: "⛈️",
+  99: "⛈️"
 };
 
-// Default fallback for unknown codes
-const WEATHER_UNKNOWN = { icon: "🌡️", text: "未知", textEn: "Unknown" };
 
 /**
  * Get air quality level from AQI (US AQI standard)
  * @param {number} aqi - Air Quality Index (0-500+)
  * @param {string} lang - Language (en or zh)
- * @returns {{level: string, levelEn: string, icon: string}}
+ * @returns {{level: string, icon: string}}
  */
 function getAirQualityLevel(aqi, lang = "zh") {
+  const t = key => window.CalendarExtI18n.t(lang, key);
   if (!Number.isFinite(aqi) || aqi < 0) {
-    return { level: "未知", levelEn: "Unknown", icon: "❓" };
+    return { level: t("weatherUnknown"), icon: "❓" };
   }
   
   if (aqi <= 50) {
-    return { level: "优", levelEn: "Good", icon: "🟢" };
+    return { level: t("aqiGood"), icon: "🟢" };
   } else if (aqi <= 100) {
-    return { level: "良", levelEn: "Moderate", icon: "🟡" };
+    return { level: t("aqiModerate"), icon: "🟡" };
   } else if (aqi <= 150) {
-    return { level: "轻度污染", levelEn: "Unhealthy for Sensitive", icon: "🟠" };
+    return { level: t("aqiSensitive"), icon: "🟠" };
   } else if (aqi <= 200) {
-    return { level: "中度污染", levelEn: "Unhealthy", icon: "🔴" };
+    return { level: t("aqiUnhealthy"), icon: "🔴" };
   } else if (aqi <= 300) {
-    return { level: "重度污染", levelEn: "Very Unhealthy", icon: "🟣" };
+    return { level: t("aqiVeryUnhealthy"), icon: "🟣" };
   } else {
-    return { level: "严重污染", levelEn: "Hazardous", icon: "⚫" };
+    return { level: t("aqiHazardous"), icon: "⚫" };
   }
 }
 
@@ -87,11 +86,9 @@ function getAirQualityLevel(aqi, lang = "zh") {
  * @returns {{icon: string, text: string}}
  */
 function getWeatherFromCode(code, lang = "zh") {
-  const info = WEATHER_CODE_MAP[code] || WEATHER_UNKNOWN;
-  return {
-    icon: info.icon,
-    text: lang === "zh" ? info.text : info.textEn
-  };
+  const icon = WEATHER_CODE_MAP[code];
+  const key = icon ? `weatherCode${code}` : "weatherUnknown";
+  return { icon: icon || "🌡️", text: window.CalendarExtI18n.t(lang, key) };
 }
 
 /**
@@ -224,7 +221,7 @@ async function getWeather(settings, lang = "zh") {
       return { 
         success: false, 
         error: "location_unavailable",
-        errorMessage: lang === "zh" ? "无法获取位置" : "Location unavailable"
+        errorMessage: window.CalendarExtI18n.t(lang, "weatherLocationUnavailable")
       };
     }
   }
@@ -241,7 +238,7 @@ async function getWeather(settings, lang = "zh") {
       const aqLevel = getAirQualityLevel(cached.airQuality.aqi, lang);
       airQuality = {
         ...cached.airQuality,
-        level: lang === "zh" ? aqLevel.level : aqLevel.levelEn,
+        level: aqLevel.level,
         icon: aqLevel.icon
       };
     }
@@ -311,7 +308,7 @@ async function getWeather(settings, lang = "zh") {
           const aqLevel = getAirQualityLevel(aqi, lang);
           airQuality = {
             aqi: Math.round(aqi),
-            level: lang === "zh" ? aqLevel.level : aqLevel.levelEn,
+            level: aqLevel.level,
             icon: aqLevel.icon
           };
         }

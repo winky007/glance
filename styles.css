@@ -163,6 +163,12 @@ body:not(.options) .card-right:focus-within {
   gap: 8px;
 }
 
+html[lang="en"] .calendar-row-lunar {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
 .weather-info {
   display: inline-flex;
   align-items: center;
@@ -170,6 +176,19 @@ body:not(.options) .card-right:focus-within {
   font-size: 14px;
   color: var(--muted);
   margin-left: 8px;
+}
+
+html[lang="en"] .weather-info {
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-left: 0;
+}
+
+.weather-current {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
 }
 
 .weather-info[hidden] {
@@ -202,6 +221,13 @@ body:not(.options) .card-right:focus-within {
   margin-left: 8px;
   padding-left: 8px;
   border-left: 1px solid rgba(255,255,255,0.25);
+}
+
+html[lang="en"] :is(.weather-airquality, .weather-tomorrow) {
+  margin-left: 0;
+  padding-left: 0;
+  border-left: 0;
+  white-space: nowrap;
 }
 
 .weather-error {

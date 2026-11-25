@@ -1,0 +1,646 @@
+{
+  "onThisDay": {
+    "message": "历史上的今天"
+  },
+  "calendar": {
+    "message": "日历"
+  },
+  "news": {
+    "message": "新闻"
+  },
+  "loading": {
+    "message": "加载中…"
+  },
+  "settings": {
+    "message": "设置"
+  },
+  "lunarPrefix": {
+    "message": "农历"
+  },
+  "eventsSource": {
+    "message": "来源"
+  },
+  "eventsUnavailable": {
+    "message": "网络不可用，暂无历史事件（可稍后重试）"
+  },
+  "settingsTitle": {
+    "message": "设置"
+  },
+  "language": {
+    "message": "语言"
+  },
+  "languageSubtitle": {
+    "message": "可选择简体中文、英文或跟随 Chrome 语言"
+  },
+  "uiLanguage": {
+    "message": "界面语言"
+  },
+  "dateFormat": {
+    "message": "日期格式"
+  },
+  "dateFormatAuto": {
+    "message": "自动（跟随浏览器地区）"
+  },
+  "dateFormatPreview": {
+    "message": "浏览器语言地区 $arg_1$ · $arg_2$",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      },
+      "arg_2": {
+        "content": "$2"
+      }
+    }
+  },
+  "dateFormatUk": {
+    "message": "英式 · 星期三 25 November 2026"
+  },
+  "dateFormatUs": {
+    "message": "美式 · 星期三, November 25, 2026"
+  },
+  "dateFormatNumeric": {
+    "message": "数字日期 · 2026-11-25 星期三"
+  },
+  "showLunar": {
+    "message": "显示农历和生肖（北京时间）"
+  },
+  "showDualClock": {
+    "message": "显示本地时间和第二时区"
+  },
+  "secondTimeZone": {
+    "message": "第二时区"
+  },
+  "clockLocal": {
+    "message": "本地"
+  },
+  "clockBeijing": {
+    "message": "北京"
+  },
+  "clockLondon": {
+    "message": "伦敦"
+  },
+  "clockNewYork": {
+    "message": "纽约"
+  },
+  "clockTokyo": {
+    "message": "东京"
+  },
+  "newsSection": {
+    "message": "新闻"
+  },
+  "newsSubtitle": {
+    "message": "RSS 订阅地址"
+  },
+  "rssUrl": {
+    "message": "RSS URL"
+  },
+  "rssTitlePlaceholder": {
+    "message": "标题（可不填）"
+  },
+  "rssHint": {
+    "message": "推荐："
+  },
+  "rssChineseSection": {
+    "message": "中文语言区"
+  },
+  "rssEnglishSection": {
+    "message": "英文语言区"
+  },
+  "rssOpenDirectory": {
+    "message": "打开 RSS 目录"
+  },
+  "rssSubscribe": {
+    "message": "订阅"
+  },
+  "rssSubscribed": {
+    "message": "已订阅"
+  },
+  "rssSaveFailed": {
+    "message": "订阅保存失败"
+  },
+  "rssNoFeeds": {
+    "message": "请在设置中添加 RSS 订阅源"
+  },
+  "rssScrollLeft": {
+    "message": "向左查看订阅源"
+  },
+  "rssScrollRight": {
+    "message": "向右查看订阅源"
+  },
+  "rssNoItems": {
+    "message": "暂无新闻"
+  },
+  "rssLoadFailed": {
+    "message": "此订阅源加载失败"
+  },
+  "rssCached": {
+    "message": "刷新失败，正在显示上次保存的新闻"
+  },
+  "rssFormatHint": {
+    "message": "支持 RSS 2.0 和 Atom 格式"
+  },
+  "onThisDaySource": {
+    "message": "历史上的今天数据源"
+  },
+  "onThisDaySourceBaike": {
+    "message": "百度百科"
+  },
+  "onThisDaySourceWiki": {
+    "message": "Wikipedia"
+  },
+  "eventsLanguage": {
+    "message": "历史上的今天语言（Wikipedia 语言代码）"
+  },
+  "eventsLangHint": {
+    "message": "会请求 `https://{lang}.wikipedia.org/...`，例如 `zh` 就是中文维基。"
+  },
+  "wallpaperSource": {
+    "message": "背景图片来源"
+  },
+  "wallpaperSourceLocal": {
+    "message": "本地图片"
+  },
+  "wallpaperSourceUploaded": {
+    "message": "本地上传图片"
+  },
+  "wallpaperSourceBingRandom": {
+    "message": "Bing随机壁纸"
+  },
+  "wallpaperSourceBingToday": {
+    "message": "Bing今日壁纸"
+  },
+  "wallpaperSourceUnsplash": {
+    "message": "Unsplash"
+  },
+  "unsplashSection": {
+    "message": "Unsplash 配置"
+  },
+  "unsplashSubtitle": {
+    "message": "填写 Access Key 和 Collection ID 以使用 Unsplash"
+  },
+  "unsplashKey": {
+    "message": "Access Key"
+  },
+  "unsplashCollectionId": {
+    "message": "Collection ID"
+  },
+  "unsplashCollectionPlaceholder": {
+    "message": "例如：123456 或 123456,789012（仅数字）"
+  },
+  "refreshPolicy": {
+    "message": "刷新策略"
+  },
+  "refreshSubtitle": {
+    "message": "默认每天固定一张（可切换）"
+  },
+  "bgRefresh": {
+    "message": "背景刷新"
+  },
+  "refreshDaily": {
+    "message": "每天固定一张（推荐）"
+  },
+  "refreshAlways": {
+    "message": "每次打开随机"
+  },
+  "cacheAndBlock": {
+    "message": "缓存与屏蔽"
+  },
+  "cacheSubtitle": {
+    "message": "管理已屏蔽的图片"
+  },
+  "clear": {
+    "message": "清空"
+  },
+  "clearCache": {
+    "message": "清空缓存"
+  },
+  "clearBlock": {
+    "message": "清空屏蔽列表"
+  },
+  "saved": {
+    "message": "已保存"
+  },
+  "saving": {
+    "message": "保存中…"
+  },
+  "clearedKey": {
+    "message": "已清空"
+  },
+  "cacheCleared": {
+    "message": "已清空缓存"
+  },
+  "blockCleared": {
+    "message": "已清空屏蔽列表"
+  },
+  "localImagesTitle": {
+    "message": "上传本地图片"
+  },
+  "localImagesSubtitle": {
+    "message": "拖拽图片到这里，或点击选择"
+  },
+  "dropZoneText": {
+    "message": "拖拽图片到这里或点击选择"
+  },
+  "noImagesUploaded": {
+    "message": "还没有上传图片"
+  },
+  "confirmDeleteImage": {
+    "message": "删除这张图片？"
+  },
+  "imageDeleted": {
+    "message": "图片已删除"
+  },
+  "deleteFailed": {
+    "message": "删除失败"
+  },
+  "noImageFiles": {
+    "message": "没有选择图片文件"
+  },
+  "exportImages": {
+    "message": "导出图片"
+  },
+  "importImages": {
+    "message": "导入图片"
+  },
+  "exportSuccess": {
+    "message": "图片已导出"
+  },
+  "exportFailed": {
+    "message": "导出失败"
+  },
+  "importSuccess": {
+    "message": "图片已导入"
+  },
+  "importFailed": {
+    "message": "导入失败"
+  },
+  "weatherSection": {
+    "message": "天气"
+  },
+  "weatherSubtitle": {
+    "message": "在农历旁边显示当前天气"
+  },
+  "weatherEnabled": {
+    "message": "启用天气"
+  },
+  "weatherEnabledHint": {
+    "message": "获取天气信息需要获取地理位置信息"
+  },
+  "weatherLocation": {
+    "message": "位置设置"
+  },
+  "weatherLocMethod": {
+    "message": "获取位置方式"
+  },
+  "weatherLocMethodAuto": {
+    "message": "自动获取（需要浏览器授权）"
+  },
+  "weatherLocMethodCity": {
+    "message": "手动输入城市信息"
+  },
+  "weatherCity": {
+    "message": "城市名称"
+  },
+  "weatherCityPlaceholder": {
+    "message": "例如：Hefei, Shanghai, New York"
+  },
+  "weatherSearchCity": {
+    "message": "搜索"
+  },
+  "weatherCityHint": {
+    "message": "输入英文城市名进行搜索。"
+  },
+  "weatherSearching": {
+    "message": "搜索中..."
+  },
+  "weatherCityNotFound": {
+    "message": "未找到城市"
+  },
+  "weatherCityFound": {
+    "message": "已找到"
+  },
+  "weatherSelectCity": {
+    "message": "请选择城市："
+  },
+  "weatherLat": {
+    "message": "纬度"
+  },
+  "weatherLon": {
+    "message": "经度"
+  },
+  "weatherLatPlaceholder": {
+    "message": "例如：31.2222"
+  },
+  "weatherLonPlaceholder": {
+    "message": "例如：121.4581"
+  },
+  "weatherAutoDetect": {
+    "message": "自动获取位置"
+  },
+  "weatherLocationDetected": {
+    "message": "位置已获取"
+  },
+  "weatherLocationFailed": {
+    "message": "无法获取位置"
+  },
+  "refreshWallpaper": {
+    "message": "刷新图片"
+  },
+  "extensionName": {
+    "message": "看尽"
+  },
+  "extensionDescription": {
+    "message": "在新标签页查看日历、双时区、天气、RSS 新闻、历史上的今天和壁纸。"
+  },
+  "interfaceLanguageCode": {
+    "message": "zh"
+  },
+  "followChromeLanguage": {
+    "message": "跟随 Chrome 语言"
+  },
+  "settingsPageTitle": {
+    "message": "设置 · 看尽"
+  },
+  "newTabTitle": {
+    "message": "新标签页 · 看尽"
+  },
+  "add": {
+    "message": "添加"
+  },
+  "enabledOn": {
+    "message": "✓ 开启"
+  },
+  "enabledOff": {
+    "message": "✗ 关闭"
+  },
+  "verifyCity": {
+    "message": "查询城市 ↗"
+  },
+  "rssDrag": {
+    "message": "拖动排序"
+  },
+  "rssRemove": {
+    "message": "移除订阅源"
+  },
+  "imageDatabaseUnavailable": {
+    "message": "图片存储不可用"
+  },
+  "imageListFailed": {
+    "message": "加载图片失败"
+  },
+  "imageAlt": {
+    "message": "已上传的图片"
+  },
+  "deleteImage": {
+    "message": "删除图片"
+  },
+  "imageUploadCount": {
+    "message": "已上传 $arg_1$ 张图片",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "imageImportCount": {
+    "message": "已导入 $arg_1$ 张图片",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "imageFailedCount": {
+    "message": "$arg_1$ 张图片处理失败",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "weatherSearchFailed": {
+    "message": "搜索城市失败"
+  },
+  "weatherLoading": {
+    "message": "正在获取天气…"
+  },
+  "weatherUnavailable": {
+    "message": "天气数据不可用"
+  },
+  "weatherLocationUnavailable": {
+    "message": "无法获取位置"
+  },
+  "weatherAqiLabel": {
+    "message": "空气"
+  },
+  "weatherAirQuality": {
+    "message": "空气质量"
+  },
+  "weatherTomorrowShort": {
+    "message": "明"
+  },
+  "weatherTomorrow": {
+    "message": "明天"
+  },
+  "weatherCode": {
+    "message": "天气代码 $arg_1$",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "weatherUnknown": {
+    "message": "未知"
+  },
+  "aqiGood": {
+    "message": "优"
+  },
+  "aqiModerate": {
+    "message": "良"
+  },
+  "aqiSensitive": {
+    "message": "轻度污染"
+  },
+  "aqiUnhealthy": {
+    "message": "中度污染"
+  },
+  "aqiVeryUnhealthy": {
+    "message": "重度污染"
+  },
+  "aqiHazardous": {
+    "message": "严重污染"
+  },
+  "eventsCached": {
+    "message": "缓存"
+  },
+  "eventsWikipediaCredit": {
+    "message": "Wikipedia（$arg_1$）",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "lunarUnavailable": {
+    "message": "农历日期不可用"
+  },
+  "wallpaperOfflineCredit": {
+    "message": "离线背景"
+  },
+  "wallpaperUploadedCredit": {
+    "message": "本地上传 · $arg_1$",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "wallpaperLocalCredit": {
+    "message": "本地图片 · $arg_1$",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "wallpaperUnsplashCredit": {
+    "message": "Unsplash 摄影 · $arg_1$",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "wallpaperBingCredit": {
+    "message": "Bing 壁纸"
+  },
+  "weatherCode0": {
+    "message": "晴"
+  },
+  "weatherCode1": {
+    "message": "晴间多云"
+  },
+  "weatherCode2": {
+    "message": "多云"
+  },
+  "weatherCode3": {
+    "message": "阴"
+  },
+  "weatherCode45": {
+    "message": "雾"
+  },
+  "weatherCode48": {
+    "message": "雾凇"
+  },
+  "weatherCode51": {
+    "message": "小毛毛雨"
+  },
+  "weatherCode53": {
+    "message": "毛毛雨"
+  },
+  "weatherCode55": {
+    "message": "密集毛毛雨"
+  },
+  "weatherCode56": {
+    "message": "冻毛毛雨"
+  },
+  "weatherCode57": {
+    "message": "密集冻毛毛雨"
+  },
+  "weatherCode61": {
+    "message": "小雨"
+  },
+  "weatherCode63": {
+    "message": "中雨"
+  },
+  "weatherCode65": {
+    "message": "大雨"
+  },
+  "weatherCode66": {
+    "message": "小冻雨"
+  },
+  "weatherCode67": {
+    "message": "大冻雨"
+  },
+  "weatherCode71": {
+    "message": "小雪"
+  },
+  "weatherCode73": {
+    "message": "中雪"
+  },
+  "weatherCode75": {
+    "message": "大雪"
+  },
+  "weatherCode77": {
+    "message": "雪粒"
+  },
+  "weatherCode80": {
+    "message": "小阵雨"
+  },
+  "weatherCode81": {
+    "message": "中阵雨"
+  },
+  "weatherCode82": {
+    "message": "强阵雨"
+  },
+  "weatherCode85": {
+    "message": "小阵雪"
+  },
+  "weatherCode86": {
+    "message": "大阵雪"
+  },
+  "weatherCode95": {
+    "message": "雷暴"
+  },
+  "weatherCode96": {
+    "message": "雷暴伴小冰雹"
+  },
+  "weatherCode99": {
+    "message": "雷暴伴大冰雹"
+  },
+  "lunarZodiacYear": {
+    "message": "$animal$年",
+    "placeholders": {
+      "animal": {
+        "content": "$1"
+      }
+    }
+  },
+  "zodiac0": {
+    "message": "鼠"
+  },
+  "zodiac1": {
+    "message": "牛"
+  },
+  "zodiac2": {
+    "message": "虎"
+  },
+  "zodiac3": {
+    "message": "兔"
+  },
+  "zodiac4": {
+    "message": "龙"
+  },
+  "zodiac5": {
+    "message": "蛇"
+  },
+  "zodiac6": {
+    "message": "马"
+  },
+  "zodiac7": {
+    "message": "羊"
+  },
+  "zodiac8": {
+    "message": "猴"
+  },
+  "zodiac9": {
+    "message": "鸡"
+  },
+  "zodiac10": {
+    "message": "狗"
+  },
+  "zodiac11": {
+    "message": "猪"
+  }
+}

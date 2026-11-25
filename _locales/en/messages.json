@@ -1,0 +1,646 @@
+{
+  "onThisDay": {
+    "message": "On this day"
+  },
+  "calendar": {
+    "message": "Calendar"
+  },
+  "news": {
+    "message": "News"
+  },
+  "loading": {
+    "message": "Loading…"
+  },
+  "settings": {
+    "message": "Settings"
+  },
+  "lunarPrefix": {
+    "message": "Lunar"
+  },
+  "eventsSource": {
+    "message": "Source"
+  },
+  "eventsUnavailable": {
+    "message": "Network unavailable. No events yet."
+  },
+  "settingsTitle": {
+    "message": "Settings"
+  },
+  "language": {
+    "message": "Language"
+  },
+  "languageSubtitle": {
+    "message": "Choose English, Simplified Chinese, or the Chrome language"
+  },
+  "uiLanguage": {
+    "message": "UI Language"
+  },
+  "dateFormat": {
+    "message": "Date format"
+  },
+  "dateFormatAuto": {
+    "message": "Automatic (browser region)"
+  },
+  "dateFormatPreview": {
+    "message": "Browser locale $arg_1$ · $arg_2$",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      },
+      "arg_2": {
+        "content": "$2"
+      }
+    }
+  },
+  "dateFormatUk": {
+    "message": "UK · Wednesday 25 November 2026"
+  },
+  "dateFormatUs": {
+    "message": "US · Wednesday, November 25, 2026"
+  },
+  "dateFormatNumeric": {
+    "message": "Numeric · 2026-11-25 Wednesday"
+  },
+  "showLunar": {
+    "message": "Show Chinese lunar date and zodiac (Beijing time)"
+  },
+  "showDualClock": {
+    "message": "Show local time and a second time zone"
+  },
+  "secondTimeZone": {
+    "message": "Second time zone"
+  },
+  "clockLocal": {
+    "message": "Local"
+  },
+  "clockBeijing": {
+    "message": "Beijing"
+  },
+  "clockLondon": {
+    "message": "London"
+  },
+  "clockNewYork": {
+    "message": "New York"
+  },
+  "clockTokyo": {
+    "message": "Tokyo"
+  },
+  "newsSection": {
+    "message": "News"
+  },
+  "newsSubtitle": {
+    "message": "RSS feeds"
+  },
+  "rssUrl": {
+    "message": "RSS URL"
+  },
+  "rssTitlePlaceholder": {
+    "message": "Title (optional)"
+  },
+  "rssHint": {
+    "message": "Recommended:"
+  },
+  "rssChineseSection": {
+    "message": "Chinese-language feeds"
+  },
+  "rssEnglishSection": {
+    "message": "English-language feeds"
+  },
+  "rssOpenDirectory": {
+    "message": "Open RSS directory"
+  },
+  "rssSubscribe": {
+    "message": "Subscribe"
+  },
+  "rssSubscribed": {
+    "message": "Subscribed"
+  },
+  "rssSaveFailed": {
+    "message": "Could not save the subscription"
+  },
+  "rssNoFeeds": {
+    "message": "Add an RSS feed in settings"
+  },
+  "rssScrollLeft": {
+    "message": "Scroll news sources left"
+  },
+  "rssScrollRight": {
+    "message": "Scroll news sources right"
+  },
+  "rssNoItems": {
+    "message": "No articles available"
+  },
+  "rssLoadFailed": {
+    "message": "This feed could not be loaded"
+  },
+  "rssCached": {
+    "message": "Showing saved articles because this feed could not refresh"
+  },
+  "rssFormatHint": {
+    "message": "Supports RSS 2.0 and Atom formats"
+  },
+  "onThisDaySource": {
+    "message": "On This Day data source"
+  },
+  "onThisDaySourceBaike": {
+    "message": "Baidu Baike"
+  },
+  "onThisDaySourceWiki": {
+    "message": "Wikipedia"
+  },
+  "eventsLanguage": {
+    "message": "On This Day language (Wikipedia code)"
+  },
+  "eventsLangHint": {
+    "message": "Will request `https://{lang}.wikipedia.org/...`, e.g. `zh` for Chinese."
+  },
+  "wallpaperSource": {
+    "message": "Background Image Source"
+  },
+  "wallpaperSourceLocal": {
+    "message": "Local Images"
+  },
+  "wallpaperSourceUploaded": {
+    "message": "Uploaded Images"
+  },
+  "wallpaperSourceBingRandom": {
+    "message": "Bing Random Wallpaper"
+  },
+  "wallpaperSourceBingToday": {
+    "message": "Bing Today's Wallpaper"
+  },
+  "wallpaperSourceUnsplash": {
+    "message": "Unsplash"
+  },
+  "unsplashSection": {
+    "message": "Unsplash Configuration"
+  },
+  "unsplashSubtitle": {
+    "message": "Fill in Access Key and Collection ID to use Unsplash"
+  },
+  "unsplashKey": {
+    "message": "Access Key"
+  },
+  "unsplashCollectionId": {
+    "message": "Collection ID"
+  },
+  "unsplashCollectionPlaceholder": {
+    "message": "e.g. 123456 or 123456,789012 (numbers only)"
+  },
+  "refreshPolicy": {
+    "message": "Refresh Policy"
+  },
+  "refreshSubtitle": {
+    "message": "Default: one fixed image per day"
+  },
+  "bgRefresh": {
+    "message": "Background refresh"
+  },
+  "refreshDaily": {
+    "message": "Daily (recommended)"
+  },
+  "refreshAlways": {
+    "message": "Random each new tab"
+  },
+  "cacheAndBlock": {
+    "message": "Cache & Blocklist"
+  },
+  "cacheSubtitle": {
+    "message": "Manage blocked images"
+  },
+  "clear": {
+    "message": "Clear"
+  },
+  "clearCache": {
+    "message": "Clear cache"
+  },
+  "clearBlock": {
+    "message": "Clear blocklist"
+  },
+  "saved": {
+    "message": "Saved"
+  },
+  "saving": {
+    "message": "Saving…"
+  },
+  "clearedKey": {
+    "message": "Cleared"
+  },
+  "cacheCleared": {
+    "message": "Cache cleared"
+  },
+  "blockCleared": {
+    "message": "Blocklist cleared"
+  },
+  "localImagesTitle": {
+    "message": "Upload Local Images"
+  },
+  "localImagesSubtitle": {
+    "message": "Drag and drop images here, or click to select"
+  },
+  "dropZoneText": {
+    "message": "Drop images here or click to select"
+  },
+  "noImagesUploaded": {
+    "message": "No images uploaded yet"
+  },
+  "confirmDeleteImage": {
+    "message": "Delete this image?"
+  },
+  "imageDeleted": {
+    "message": "Image deleted"
+  },
+  "deleteFailed": {
+    "message": "Delete failed"
+  },
+  "noImageFiles": {
+    "message": "No image files selected"
+  },
+  "exportImages": {
+    "message": "Export Images"
+  },
+  "importImages": {
+    "message": "Import Images"
+  },
+  "exportSuccess": {
+    "message": "Images exported"
+  },
+  "exportFailed": {
+    "message": "Export failed"
+  },
+  "importSuccess": {
+    "message": "Images imported"
+  },
+  "importFailed": {
+    "message": "Import failed"
+  },
+  "weatherSection": {
+    "message": "Weather"
+  },
+  "weatherSubtitle": {
+    "message": "Show current weather next to lunar calendar"
+  },
+  "weatherEnabled": {
+    "message": "Enable weather"
+  },
+  "weatherEnabledHint": {
+    "message": "Requires location information to fetch weather data"
+  },
+  "weatherLocation": {
+    "message": "Location Settings"
+  },
+  "weatherLocMethod": {
+    "message": "Location Method"
+  },
+  "weatherLocMethodAuto": {
+    "message": "Auto-detect (requires browser permission)"
+  },
+  "weatherLocMethodCity": {
+    "message": "Search by city name"
+  },
+  "weatherCity": {
+    "message": "City Name"
+  },
+  "weatherCityPlaceholder": {
+    "message": "e.g. Hefei, Shanghai, New York"
+  },
+  "weatherSearchCity": {
+    "message": "Search"
+  },
+  "weatherCityHint": {
+    "message": "Enter English city name to search."
+  },
+  "weatherSearching": {
+    "message": "Searching..."
+  },
+  "weatherCityNotFound": {
+    "message": "City not found"
+  },
+  "weatherCityFound": {
+    "message": "Found"
+  },
+  "weatherSelectCity": {
+    "message": "Select a city:"
+  },
+  "weatherLat": {
+    "message": "Latitude"
+  },
+  "weatherLon": {
+    "message": "Longitude"
+  },
+  "weatherLatPlaceholder": {
+    "message": "e.g. 31.2222"
+  },
+  "weatherLonPlaceholder": {
+    "message": "e.g. 121.4581"
+  },
+  "weatherAutoDetect": {
+    "message": "Auto-detect location"
+  },
+  "weatherLocationDetected": {
+    "message": "Location detected"
+  },
+  "weatherLocationFailed": {
+    "message": "Failed to detect location"
+  },
+  "refreshWallpaper": {
+    "message": "Refresh image"
+  },
+  "extensionName": {
+    "message": "Glance"
+  },
+  "extensionDescription": {
+    "message": "A new tab with a calendar, dual time zones, weather, RSS news, On This Day, and wallpapers."
+  },
+  "interfaceLanguageCode": {
+    "message": "en"
+  },
+  "followChromeLanguage": {
+    "message": "Follow Chrome language"
+  },
+  "settingsPageTitle": {
+    "message": "Settings · Glance"
+  },
+  "newTabTitle": {
+    "message": "New Tab · Glance"
+  },
+  "add": {
+    "message": "Add"
+  },
+  "enabledOn": {
+    "message": "✓ On"
+  },
+  "enabledOff": {
+    "message": "✗ Off"
+  },
+  "verifyCity": {
+    "message": "Verify city here ↗"
+  },
+  "rssDrag": {
+    "message": "Drag to reorder"
+  },
+  "rssRemove": {
+    "message": "Remove feed"
+  },
+  "imageDatabaseUnavailable": {
+    "message": "Image storage is unavailable"
+  },
+  "imageListFailed": {
+    "message": "Could not load images"
+  },
+  "imageAlt": {
+    "message": "Uploaded image"
+  },
+  "deleteImage": {
+    "message": "Delete image"
+  },
+  "imageUploadCount": {
+    "message": "Images uploaded: $arg_1$",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "imageImportCount": {
+    "message": "Images imported: $arg_1$",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "imageFailedCount": {
+    "message": "Images that failed: $arg_1$",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "weatherSearchFailed": {
+    "message": "Could not search for cities"
+  },
+  "weatherLoading": {
+    "message": "Loading weather…"
+  },
+  "weatherUnavailable": {
+    "message": "Weather unavailable"
+  },
+  "weatherLocationUnavailable": {
+    "message": "Location unavailable"
+  },
+  "weatherAqiLabel": {
+    "message": "AQI"
+  },
+  "weatherAirQuality": {
+    "message": "Air Quality"
+  },
+  "weatherTomorrowShort": {
+    "message": "Tmr"
+  },
+  "weatherTomorrow": {
+    "message": "Tomorrow"
+  },
+  "weatherCode": {
+    "message": "Weather code $arg_1$",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "weatherUnknown": {
+    "message": "Unknown"
+  },
+  "aqiGood": {
+    "message": "Good"
+  },
+  "aqiModerate": {
+    "message": "Moderate"
+  },
+  "aqiSensitive": {
+    "message": "Unhealthy for Sensitive Groups"
+  },
+  "aqiUnhealthy": {
+    "message": "Unhealthy"
+  },
+  "aqiVeryUnhealthy": {
+    "message": "Very Unhealthy"
+  },
+  "aqiHazardous": {
+    "message": "Hazardous"
+  },
+  "eventsCached": {
+    "message": "Cache"
+  },
+  "eventsWikipediaCredit": {
+    "message": "Wikipedia ($arg_1$)",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "lunarUnavailable": {
+    "message": "Lunar date unavailable"
+  },
+  "wallpaperOfflineCredit": {
+    "message": "Offline background"
+  },
+  "wallpaperUploadedCredit": {
+    "message": "Uploaded image · $arg_1$",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "wallpaperLocalCredit": {
+    "message": "Local image · $arg_1$",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "wallpaperUnsplashCredit": {
+    "message": "Photo by $arg_1$ on Unsplash",
+    "placeholders": {
+      "arg_1": {
+        "content": "$1"
+      }
+    }
+  },
+  "wallpaperBingCredit": {
+    "message": "Bing wallpaper"
+  },
+  "weatherCode0": {
+    "message": "Clear"
+  },
+  "weatherCode1": {
+    "message": "Mainly Clear"
+  },
+  "weatherCode2": {
+    "message": "Partly Cloudy"
+  },
+  "weatherCode3": {
+    "message": "Overcast"
+  },
+  "weatherCode45": {
+    "message": "Fog"
+  },
+  "weatherCode48": {
+    "message": "Depositing Fog"
+  },
+  "weatherCode51": {
+    "message": "Light Drizzle"
+  },
+  "weatherCode53": {
+    "message": "Drizzle"
+  },
+  "weatherCode55": {
+    "message": "Dense Drizzle"
+  },
+  "weatherCode56": {
+    "message": "Freezing Drizzle"
+  },
+  "weatherCode57": {
+    "message": "Dense Freezing Drizzle"
+  },
+  "weatherCode61": {
+    "message": "Slight Rain"
+  },
+  "weatherCode63": {
+    "message": "Moderate Rain"
+  },
+  "weatherCode65": {
+    "message": "Heavy Rain"
+  },
+  "weatherCode66": {
+    "message": "Light Freezing Rain"
+  },
+  "weatherCode67": {
+    "message": "Heavy Freezing Rain"
+  },
+  "weatherCode71": {
+    "message": "Slight Snow"
+  },
+  "weatherCode73": {
+    "message": "Moderate Snow"
+  },
+  "weatherCode75": {
+    "message": "Heavy Snow"
+  },
+  "weatherCode77": {
+    "message": "Snow Grains"
+  },
+  "weatherCode80": {
+    "message": "Slight Showers"
+  },
+  "weatherCode81": {
+    "message": "Moderate Showers"
+  },
+  "weatherCode82": {
+    "message": "Violent Showers"
+  },
+  "weatherCode85": {
+    "message": "Slight Snow Showers"
+  },
+  "weatherCode86": {
+    "message": "Heavy Snow Showers"
+  },
+  "weatherCode95": {
+    "message": "Thunderstorm"
+  },
+  "weatherCode96": {
+    "message": "Thunderstorm with Hail"
+  },
+  "weatherCode99": {
+    "message": "Thunderstorm with Heavy Hail"
+  },
+  "lunarZodiacYear": {
+    "message": "Year of the $animal$",
+    "placeholders": {
+      "animal": {
+        "content": "$1"
+      }
+    }
+  },
+  "zodiac0": {
+    "message": "Rat"
+  },
+  "zodiac1": {
+    "message": "Ox"
+  },
+  "zodiac2": {
+    "message": "Tiger"
+  },
+  "zodiac3": {
+    "message": "Rabbit"
+  },
+  "zodiac4": {
+    "message": "Dragon"
+  },
+  "zodiac5": {
+    "message": "Snake"
+  },
+  "zodiac6": {
+    "message": "Horse"
+  },
+  "zodiac7": {
+    "message": "Goat"
+  },
+  "zodiac8": {
+    "message": "Monkey"
+  },
+  "zodiac9": {
+    "message": "Rooster"
+  },
+  "zodiac10": {
+    "message": "Dog"
+  },
+  "zodiac11": {
+    "message": "Pig"
+  }
+}

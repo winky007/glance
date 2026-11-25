@@ -1,245 +1,61 @@
-const STRINGS = {
-  en: {
-    // New tab page
-    onThisDay: "On this day",
-    calendar: "Calendar",
-    news: "News",
-    loading: "Loading…",
-    settings: "Settings",
-    lunarPrefix: "Lunar",
-    eventsSource: "Source",
-    eventsUnavailable: "Network unavailable. No events yet.",
-    // Settings page
-    settingsTitle: "Settings",
-    language: "Language",
-    languageSubtitle: "Supports English/Chinese; default English",
-    uiLanguage: "UI Language",
-    dateFormat: "Date format",
-    dateFormatAuto: "Automatic (browser region)",
-    dateFormatPreview: "Browser locale {locale} · {date}",
-    dateFormatUk: "UK · Wednesday 25 November 2026",
-    dateFormatUs: "US · Wednesday, November 25, 2026",
-    dateFormatNumeric: "Numeric · 2026-11-25 Wednesday",
-    showLunar: "Show Chinese lunar date and zodiac (Beijing time)",
-    showDualClock: "Show local time and a second time zone",
-    secondTimeZone: "Second time zone",
-    clockLocal: "Local",
-    clockBeijing: "Beijing",
-    clockLondon: "London",
-    clockNewYork: "New York",
-    clockTokyo: "Tokyo",
-    newsSection: "News",
-    newsSubtitle: "RSS feeds",
-    rssUrl: "RSS URL",
-    rssTitlePlaceholder: "Title (optional)",
-    rssHint: "Recommended:",
-    rssChineseSection: "Chinese-language feeds",
-    rssEnglishSection: "English-language feeds",
-    rssOpenDirectory: "Open RSS directory",
-    rssSubscribe: "Subscribe",
-    rssSubscribed: "Subscribed",
-    rssSaveFailed: "Could not save the subscription",
-    rssNoFeeds: "Add an RSS feed in settings",
-    rssScrollLeft: "Scroll news sources left",
-    rssScrollRight: "Scroll news sources right",
-    rssNoItems: "No articles available",
-    rssLoadFailed: "This feed could not be loaded",
-    rssCached: "Showing saved articles because this feed could not refresh",
-    rssFormatHint: "Supports RSS 2.0 and Atom formats",
-    onThisDaySource: "On This Day data source",
-    onThisDaySourceBaike: "Baidu Baike",
-    onThisDaySourceWiki: "Wikipedia",
-    eventsLanguage: "On This Day language (Wikipedia code)",
-    eventsLangHint: "Will request `https://{lang}.wikipedia.org/...`, e.g. `zh` for Chinese.",
-    wallpaperSource: "Background Image Source",
-    wallpaperSourceLocal: "Local Images",
-    wallpaperSourceUploaded: "Uploaded Images",
-    wallpaperSourceBingRandom: "Bing Random Wallpaper",
-    wallpaperSourceBingToday: "Bing Today's Wallpaper",
-    wallpaperSourceUnsplash: "Unsplash",
-    unsplashSection: "Unsplash Configuration",
-    unsplashSubtitle: "Fill in Access Key and Collection ID to use Unsplash",
-    unsplashKey: "Access Key",
-    unsplashCollectionId: "Collection ID",
-    unsplashCollectionPlaceholder: "e.g. 123456 or 123456,789012 (numbers only)",
-    refreshPolicy: "Refresh Policy",
-    refreshSubtitle: "Default: one fixed image per day",
-    bgRefresh: "Background refresh",
-    refreshDaily: "Daily (recommended)",
-    refreshAlways: "Random each new tab",
-    cacheAndBlock: "Cache & Blocklist",
-    cacheSubtitle: "Manage blocked images",
-    clear: "Clear",
-    clearCache: "Clear cache",
-    clearBlock: "Clear blocklist",
-    saved: "Saved",
-    saving: "Saving…",
-    clearedKey: "Cleared",
-    cacheCleared: "Cache cleared",
-    blockCleared: "Blocklist cleared",
-    localImagesTitle: "Upload Local Images",
-    localImagesSubtitle: "Drag and drop images here, or click to select",
-    dropZoneText: "Drop images here or click to select",
-    noImagesUploaded: "No images uploaded yet",
-    confirmDeleteImage: "Delete this image?",
-    imageDeleted: "Image deleted",
-    deleteFailed: "Delete failed",
-    noImageFiles: "No image files selected",
-    exportImages: "Export Images",
-    importImages: "Import Images",
-    exportSuccess: "Images exported",
-    exportFailed: "Export failed",
-    importSuccess: "Images imported",
-    importFailed: "Import failed",
-    // Weather
-    weatherSection: "Weather",
-    weatherSubtitle: "Show current weather next to lunar calendar",
-    weatherEnabled: "Enable weather",
-    weatherEnabledHint: "Requires location information to fetch weather data",
-    weatherLocation: "Location Settings",
-    weatherLocMethod: "Location Method",
-    weatherLocMethodAuto: "Auto-detect (requires browser permission)",
-    weatherLocMethodCity: "Search by city name",
-    weatherCity: "City Name",
-    weatherCityPlaceholder: "e.g. Hefei, Shanghai, New York",
-    weatherSearchCity: "Search",
-    weatherCityHint: "Enter English city name to search.",
-    weatherSearching: "Searching...",
-    weatherCityNotFound: "City not found",
-    weatherCityFound: "Found",
-    weatherSelectCity: "Select a city:",
-    weatherLat: "Latitude",
-    weatherLon: "Longitude",
-    weatherLatPlaceholder: "e.g. 31.2222",
-    weatherLonPlaceholder: "e.g. 121.4581",
-    weatherAutoDetect: "Auto-detect location",
-    weatherLocationDetected: "Location detected",
-    weatherLocationFailed: "Failed to detect location",
-    refreshWallpaper: "Refresh image"
-  },
-  zh: {
-    // New tab page
-    onThisDay: "历史上的今天",
-    calendar: "日历",
-    news: "新闻",
-    loading: "加载中…",
-    settings: "设置",
-    lunarPrefix: "农历",
-    eventsSource: "来源",
-    eventsUnavailable: "网络不可用，暂无历史事件（可稍后重试）",
-    // Settings page
-    settingsTitle: "设置",
-    language: "语言",
-    languageSubtitle: "支持中文/英文；默认英文",
-    uiLanguage: "界面语言",
-    dateFormat: "日期格式",
-    dateFormatAuto: "自动（跟随浏览器地区）",
-    dateFormatPreview: "浏览器语言地区 {locale} · {date}",
-    dateFormatUk: "英式 · 星期三 25 November 2026",
-    dateFormatUs: "美式 · 星期三, November 25, 2026",
-    dateFormatNumeric: "数字日期 · 2026-11-25 星期三",
-    showLunar: "显示农历和生肖（北京时间）",
-    showDualClock: "显示本地时间和第二时区",
-    secondTimeZone: "第二时区",
-    clockLocal: "本地",
-    clockBeijing: "北京",
-    clockLondon: "伦敦",
-    clockNewYork: "纽约",
-    clockTokyo: "东京",
-    newsSection: "新闻",
-    newsSubtitle: "RSS 订阅地址",
-    rssUrl: "RSS URL",
-    rssTitlePlaceholder: "标题（可不填）",
-    rssHint: "推荐：",
-    rssChineseSection: "中文语言区",
-    rssEnglishSection: "英文语言区",
-    rssOpenDirectory: "打开 RSS 目录",
-    rssSubscribe: "订阅",
-    rssSubscribed: "已订阅",
-    rssSaveFailed: "订阅保存失败",
-    rssNoFeeds: "请在设置中添加 RSS 订阅源",
-    rssScrollLeft: "向左查看订阅源",
-    rssScrollRight: "向右查看订阅源",
-    rssNoItems: "暂无新闻",
-    rssLoadFailed: "此订阅源加载失败",
-    rssCached: "刷新失败，正在显示上次保存的新闻",
-    rssFormatHint: "支持 RSS 2.0 和 Atom 格式",
-    onThisDaySource: "历史上的今天数据源",
-    onThisDaySourceBaike: "百度百科",
-    onThisDaySourceWiki: "Wikipedia",
-    eventsLanguage: "历史上的今天语言（Wikipedia 语言代码）",
-    eventsLangHint: "会请求 `https://{lang}.wikipedia.org/...`，例如 `zh` 就是中文维基。",
-    wallpaperSource: "背景图片来源",
-    wallpaperSourceLocal: "本地图片",
-    wallpaperSourceUploaded: "本地上传图片",
-    wallpaperSourceBingRandom: "Bing随机壁纸",
-    wallpaperSourceBingToday: "Bing今日壁纸",
-    wallpaperSourceUnsplash: "Unsplash",
-    unsplashSection: "Unsplash 配置",
-    unsplashSubtitle: "填写 Access Key 和 Collection ID 以使用 Unsplash",
-    unsplashKey: "Access Key",
-    unsplashCollectionId: "Collection ID",
-    unsplashCollectionPlaceholder: "例如：123456 或 123456,789012（仅数字）",
-    refreshPolicy: "刷新策略",
-    refreshSubtitle: "默认每天固定一张（可切换）",
-    bgRefresh: "背景刷新",
-    refreshDaily: "每天固定一张（推荐）",
-    refreshAlways: "每次打开随机",
-    cacheAndBlock: "缓存与屏蔽",
-    cacheSubtitle: "管理已屏蔽的图片",
-    clear: "清空",
-    clearCache: "清空缓存",
-    clearBlock: "清空屏蔽列表",
-    saved: "已保存",
-    saving: "保存中…",
-    clearedKey: "已清空",
-    cacheCleared: "已清空缓存",
-    blockCleared: "已清空屏蔽列表",
-    localImagesTitle: "上传本地图片",
-    localImagesSubtitle: "拖拽图片到这里，或点击选择",
-    dropZoneText: "拖拽图片到这里或点击选择",
-    noImagesUploaded: "还没有上传图片",
-    confirmDeleteImage: "删除这张图片？",
-    imageDeleted: "图片已删除",
-    deleteFailed: "删除失败",
-    noImageFiles: "没有选择图片文件",
-    exportImages: "导出图片",
-    importImages: "导入图片",
-    exportSuccess: "图片已导出",
-    exportFailed: "导出失败",
-    importSuccess: "图片已导入",
-    importFailed: "导入失败",
-    // Weather
-    weatherSection: "天气",
-    weatherSubtitle: "在农历旁边显示当前天气",
-    weatherEnabled: "启用天气",
-    weatherEnabledHint: "获取天气信息需要获取地理位置信息",
-    weatherLocation: "位置设置",
-    weatherLocMethod: "获取位置方式",
-    weatherLocMethodAuto: "自动获取（需要浏览器授权）",
-    weatherLocMethodCity: "手动输入城市信息",
-    weatherCity: "城市名称",
-    weatherCityPlaceholder: "例如：Hefei, Shanghai, New York",
-    weatherSearchCity: "搜索",
-    weatherCityHint: "输入英文城市名进行搜索。",
-    weatherSearching: "搜索中...",
-    weatherCityNotFound: "未找到城市",
-    weatherCityFound: "已找到",
-    weatherSelectCity: "请选择城市：",
-    weatherLat: "纬度",
-    weatherLon: "经度",
-    weatherLatPlaceholder: "例如：31.2222",
-    weatherLonPlaceholder: "例如：121.4581",
-    weatherAutoDetect: "自动获取位置",
-    weatherLocationDetected: "位置已获取",
-    weatherLocationFailed: "无法获取位置",
-    refreshWallpaper: "刷新图片"
-  }
-};
+const LOCALE_FOLDERS = { en: "en", zh: "zh_CN" };
+const catalogs = new Map();
+const chromeI18n = globalThis.chrome?.i18n;
+const nativeLanguage = chromeI18n?.getMessage("interfaceLanguageCode");
+const chromeLanguage = nativeLanguage === "zh" ? "zh" : "en";
 
-function t(lang, key) {
-  const l = STRINGS[lang] ? lang : "en";
-  return (STRINGS[l] && STRINGS[l][key]) || (STRINGS.en && STRINGS.en[key]) || key;
+function loadCatalog(language) {
+  if (!catalogs.has(language)) {
+    const path = `_locales/${LOCALE_FOLDERS[language]}/messages.json`;
+    const catalog = fetch(path).then(response => {
+      if (!response.ok) throw new Error(`Could not load locale ${language}`);
+      return response.json();
+    }).catch(error => {
+      catalogs.delete(language);
+      throw error;
+    });
+    catalogs.set(language, catalog);
+  }
+  return catalogs.get(language);
+}
+
+const loadedCatalogs = new Map();
+
+async function loadLanguage(preference) {
+  const language = preference === "en" || preference === "zh" ? preference : chromeLanguage;
+  for (const candidate of new Set([language, chromeLanguage, "en"])) {
+    if (candidate === nativeLanguage) return candidate;
+    try {
+      loadedCatalogs.set(candidate, await loadCatalog(candidate));
+      return candidate;
+    } catch (error) {
+      console.warn("Could not load locale catalog", candidate, error);
+    }
+  }
+  return "en";
+}
+
+function getTranslation(language, key, substitutions = []) {
+  const entry = loadedCatalogs.get(language)?.[key];
+  if (!entry) return chromeI18n?.getMessage(key, substitutions) || "";
+  return entry.message.replace(/\$([\w]+)\$/g, (token, name) => {
+    const position = entry.placeholders?.[name]?.content;
+    return position ? substitutions[Number(position.slice(1)) - 1] ?? "" : token;
+  });
+}
+
+function translatePage(language, root = document) {
+  for (const element of root.querySelectorAll("[data-i18n]")) {
+    const text = getTranslation(language, element.dataset.i18n);
+    if (text) element.textContent = text;
+  }
+  const attributes = { placeholder: "data-i18n-placeholder", title: "data-i18n-title", "aria-label": "data-i18n-aria-label", alt: "data-i18n-alt" };
+  for (const [attribute, marker] of Object.entries(attributes)) {
+    for (const element of root.querySelectorAll(`[${marker}]`)) {
+      const text = getTranslation(language, element.getAttribute(marker));
+      if (text) element.setAttribute(attribute, text);
+    }
+  }
 }
 
 function formatGregorianISO(date) {
@@ -268,6 +84,6 @@ function formatCalendarDate(date, settings, browserLocale = navigator.language) 
   return date.toLocaleDateString(`${language}-${region}`, { dateStyle: "full", calendar: "gregory" });
 }
 
-window.CalendarExtI18n = { t, formatCalendarDate };
+window.CalendarExtI18n = { t: getTranslation, loadLanguage, translatePage, formatCalendarDate };
 
 

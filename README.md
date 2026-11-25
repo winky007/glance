@@ -1,6 +1,7 @@
 English | [中文](README.zh.md)
+
 # Glance
-An intelligent chrome new tab extension: **Calendar/Lunar Calendar + Weather + News + On This Day + Beautiful Wallpapers**
+A Chrome new tab extension with a calendar, dual time zones, weather, RSS news, On This Day, and wallpapers.
 
 ![screen](tab-screen.png)
 ![setting](tab-setting.png)
@@ -14,11 +15,12 @@ An intelligent chrome new tab extension: **Calendar/Lunar Calendar + Weather + N
 
 # Features
 
-## Calendar and Lunar Calendar
+## Calendar and Time Zones
 
-- **Gregorian**: year/month/day + weekday
-- **Lunar**: month + day + zodiac year (e.g. Snake, Tiger)
-- Supports switching between Chinese and English UI
+- The Gregorian date uses your device's local time. Choose **Automatic**, **UK**, **US**, or **Numeric** in **Settings → Language → Date format**. The weekday follows the interface language.
+- **Automatic** is the default. It uses Chrome's regional preference and shows a live preview with the browser locale and today's formatted date.
+- The **Chinese lunar date and zodiac** are off by default. When enabled, they follow Beijing time, so the lunar date may correspond to a different day from the local Gregorian date around midnight.
+- The **dual time zone** display is off by default. When enabled, it shows the date and time in your device's local time zone and in Beijing, London, New York, Tokyo, or UTC. Beijing is the default second time zone.
 
 ## Weather
 
@@ -36,12 +38,10 @@ An intelligent chrome new tab extension: **Calendar/Lunar Calendar + Weather + N
 
 ## News
 
-- RSS subscriptions supported
-- **RSS examples**:
-  - China News Service: `https://www.chinanews.com.cn/rss/scroll-news.xml`
-  - VOA English: choose "Subscribe" at <https://www.voanews.com/rssfeeds>
-  - VOA Chinese: choose "Subscribe" at <https://www.voachinese.com/rssfeeds>
-- Shows publish time (accurate to seconds)
+- **Settings → News** shows both Chinese-language and English-language recommendations in either interface language. Subscribe in one click to 19 China News Service channels, four VOA News channels, IT Home, or The Guardian World. You can also add your own RSS 2.0 or Atom feed URL.
+- On each new tab, the news card shows available cached articles first. Feeds with no cache or a cache that is at least **20 minutes** old refresh independently. Each request has an **8-second** timeout.
+- If a refresh fails, saved articles remain visible for up to **24 hours after the last successful fetch**. After that, the card shows a load failure for that feed.
+- The news card shows as many complete articles as fit. Use the left and right arrows to browse feed tabs when they exceed the available width.
 
 ## On This Day
 
@@ -53,11 +53,12 @@ An intelligent chrome new tab extension: **Calendar/Lunar Calendar + Weather + N
 
 ## Background Images
 
-- **Four sources**:
+- **Five sources**:
   1. **Local images**: use images in `img/` (add your own, then run `generate_manifest.py` to generate the list)
   2. **Local uploads**: drag and drop to browser IndexedDB (supports import/export backups)
-  3. **Bing daily wallpaper** (default, no key, auto-enabled)
-  4. **Unsplash** (optional, needs Access Key + Collection ID; docs: https://unsplash.com/developers)
+  3. **Bing random wallpaper** (default, no key required)
+  4. **Bing today's wallpaper**
+  5. **Unsplash** (optional, needs an Access Key and Collection ID). [Unsplash developer documentation](https://unsplash.com/developers)
 - **Refresh**: fixed one per day / random each open
 - **Image management**:
   - Image source shown in bottom-right
@@ -66,11 +67,9 @@ An intelligent chrome new tab extension: **Calendar/Lunar Calendar + Weather + N
 
 # Settings Page
 
-- **News**: RSS subscription URLs
-- **Language**:
-  - UI language (English / Chinese)
-  - On This Day data source (Baidu Baike / Wikipedia)
-  - Wikipedia language code (only shown when Wikipedia is selected)
+- **Language** includes the interface language (Follow Chrome, English, or Simplified Chinese), date format, lunar date, and dual time zone settings. Unsupported Chrome languages fall back to English.
+- **News** lets you subscribe, add or edit feed URLs, drag to reorder, remove feeds, and clear the news cache.
+- **On This Day** lets you choose Baidu Baike or Wikipedia. The language code appears when Wikipedia is selected.
 - **Weather**:
   - Enable/disable weather (default off)
   - Location:
@@ -83,7 +82,7 @@ An intelligent chrome new tab extension: **Calendar/Lunar Calendar + Weather + N
   - Refresh strategy
   - Upload area (only for "Local uploads")
   - Import/export
-- **Cache**: clear cache (including weather cache) / blocked list
+- **Cache and blocklist** controls are available in the News, On This Day, and background sections.
 
 # Local Images and Uploads
 
@@ -112,4 +111,3 @@ An intelligent chrome new tab extension: **Calendar/Lunar Calendar + Weather + N
 - **Hover weather**: show detailed weather info (description, AQI level, tomorrow forecast)
 - **Auto-save**: changes save automatically; "Saved" appears at the top
 - **Image backup**: export uploaded images regularly to avoid loss after clearing browser data
-- **Weather cache**: cached for 1 hour; clear cache to refresh immediately

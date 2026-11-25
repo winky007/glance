@@ -41,7 +41,7 @@ function gradientFallback() {
     provider: "offline",
     kind: "gradient",
     cssBackground: css,
-    creditText: "离线背景（渐变）",
+    creditKey: "wallpaperOfflineCredit",
     creditUrl: ""
   };
 }
@@ -60,7 +60,8 @@ async function getUploadedImages() {
             kind: "photo",
             id: `db_${pick.id}`,
             imageUrl: String(pick.data), // DataURL (e.g., "data:image/jpeg;base64,...")
-            creditText: `本地上传：${pick.name || "uploaded"}`,
+            creditKey: "wallpaperUploadedCredit",
+            creditArgs: pick.name ? [pick.name] : [],
             creditUrl: ""
           };
         }
@@ -90,7 +91,8 @@ async function getLocalImageFallback() {
       kind: "photo",
       id: `file_${pick}`,
       imageUrl,
-      creditText: `本地图片：${filename}`,
+      creditKey: "wallpaperLocalCredit",
+      creditArgs: [filename],
       creditUrl: ""
     };
   } catch (e) {
@@ -126,7 +128,8 @@ async function fetchUnsplashFromCollection(unsplashKey, collectionId, signal) {
     kind: "photo",
     id,
     imageUrl: imgUrl,
-    creditText: `Photo by ${name} on Unsplash`,
+    creditKey: "wallpaperUnsplashCredit",
+    creditArgs: [name],
     creditUrl: link
   };
 }
@@ -180,7 +183,7 @@ async function fetchBingImageArchive(signal, count = 10) {
 function normalizeBingImage(img) {
   const rel = img && img.url ? String(img.url) : "";
   const imageUrl = rel.startsWith("http") ? rel : `https://www.bing.com${rel}`;
-  const creditText = img && img.copyright ? String(img.copyright) : "Bing wallpaper";
+  const creditText = img && img.copyright ? String(img.copyright) : "";
   const creditUrl = img && img.copyrightlink ? String(img.copyrightlink) : "https://www.bing.com";
   const id = img && (img.hsh || img.urlbase || img.fullstartdate) ? String(img.hsh || img.urlbase || img.fullstartdate) : imageUrl;
   return {
@@ -189,6 +192,7 @@ function normalizeBingImage(img) {
     id,
     imageUrl,
     creditText,
+    creditKey: creditText ? undefined : "wallpaperBingCredit",
     creditUrl
   };
 }

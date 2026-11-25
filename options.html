@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title data-i18n="settingsTitle">Settings - Calendar New Tab</title>
+    <title data-i18n="settingsPageTitle">Settings · Glance</title>
     <link rel="stylesheet" href="styles.css" />
 </head>
 
@@ -18,12 +18,13 @@
         <section class="card">
             <div class="card-header">
                 <div class="card-title" data-i18n="language">Language</div>
-                <div class="card-subtitle" data-i18n="languageSubtitle">Supports English/Chinese; default English</div>
+                <div class="card-subtitle" data-i18n="languageSubtitle">Choose English, Simplified Chinese, or the Chrome language</div>
             </div>
 
             <label class="field">
                 <div class="field-label" data-i18n="uiLanguage">UI Language</div>
                 <select id="uiLang">
+                    <option value="auto" data-i18n="followChromeLanguage">Follow Chrome language</option>
                     <option value="en">English</option>
                     <option value="zh">中文</option>
                 </select>
@@ -126,8 +127,8 @@
             <label class="field">
                 <div class="field-label" data-i18n="weatherEnabled">Enable weather</div>
                 <select id="weatherEnabled">
-                    <option value="true">✓ On</option>
-                    <option value="false">✗ Off</option>
+                    <option value="true" data-i18n="enabledOn">✓ On</option>
+                    <option value="false" data-i18n="enabledOff">✗ Off</option>
                 </select>
                 <div class="muted" data-i18n="weatherEnabledHint">Requires location information to fetch weather data</div>
             </label>
@@ -159,7 +160,7 @@
                         </div>
                         <div class="muted" style="margin-top: 8px;">
                             <span data-i18n="weatherCityHint">Enter English city name to search. </span>
-                            <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noopener">Verify city here ↗</a>
+                            <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noopener" data-i18n="verifyCity">Verify city here ↗</a>
                         </div>
                     </label>
 
@@ -225,7 +226,7 @@
 
                 <label class="field">
                     <div class="field-label" data-i18n="unsplashKey">Access Key</div>
-                    <input id="unsplashKey" type="password" autocomplete="off" placeholder="Unsplash Access Key" />
+                    <input id="unsplashKey" type="password" autocomplete="off" data-i18n-placeholder="unsplashKey" placeholder="Access Key" />
                 </label>
 
                 <label class="field">
