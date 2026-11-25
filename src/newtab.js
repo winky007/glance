@@ -310,8 +310,10 @@ async function renderNews() {
   const source = $("news-source");
   const translate = key => I18n.t(uiLang, key);
   const cacheTtl = 20 * 60 * 1000;
+  const maxCacheAge = 24 * 60 * 60 * 1000;
   let activeIndex = 0;
   let selectedByUser = false;
+  let cacheExpiryTimer;
 
   if (!feeds.length) {
     status.textContent = translate("rssNoFeeds");
@@ -320,11 +322,16 @@ async function renderNews() {
   }
 
   const cache = await Storage.getNewsFeedCaches(feeds.map(feed => feed.url)).catch(() => []);
-  const states = feeds.map((_, index) => ({
-    data: cache[index],
-    loading: !cache[index]?.cachedAt || Date.now() - cache[index].cachedAt >= cacheTtl,
-    failed: false
-  }));
+  const now = Date.now();
+  const states = feeds.map((_, index) => {
+    const entry = cache[index];
+    const age = entry?.cachedAt ? now - entry.cachedAt : Infinity;
+    return {
+      data: age < maxCacheAge ? entry : null,
+      loading: age >= cacheTtl,
+      failed: false
+    };
+  });
 
   tabs.replaceChildren();
   feeds.forEach((feed, index) => {
@@ -380,12 +387,15 @@ async function renderNews() {
   }));
 
   function renderActiveFeed() {
+    clearTimeout(cacheExpiryTimer);
     Array.from(tabs.children).forEach((tab, index) => {
       tab.classList.toggle("active", index === activeIndex);
       tab.setAttribute("aria-pressed", String(index === activeIndex));
     });
 
-    const { data, loading, failed } = states[activeIndex];
+    const state = states[activeIndex];
+    if (state.data && Date.now() - state.data.cachedAt >= maxCacheAge) state.data = null;
+    const { data, loading, failed } = state;
     const url = feeds[activeIndex].url;
     const items = data?.items || [];
     status.hidden = Boolean(items.length) && !failed;
@@ -397,6 +407,9 @@ async function renderNews() {
     source.hidden = !items.length;
     source.replaceChildren();
     if (!items.length) return;
+    if (loading || failed) {
+      cacheExpiryTimer = setTimeout(renderActiveFeed, data.cachedAt + maxCacheAge - Date.now());
+    }
 
     const titleMax = /voanews.com/i.test(url) ? 43 : 23;
     for (const item of items) {
